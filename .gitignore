@@ -1,0 +1,9 @@
+# Eagle files
+*.s#?
+*.b#?
+*.pyc
+**/.pio*
+.DS_Store
+
+build/
+
