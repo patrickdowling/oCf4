@@ -5909,79 +5909,6 @@ NS Package M08A</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="pld-usb-ti">
-<packages>
-<package name="SOT23-5L">
-<description>&lt;b&gt;Small Outline Transistor&lt;/b&gt; SOT23-5L&lt;p&gt;
-Source: www.st.com LD3985.pdf</description>
-<wire x1="1.422" y1="0.81" x2="1.422" y2="-0.81" width="0.1524" layer="21"/>
-<wire x1="1.422" y1="-0.81" x2="-1.422" y2="-0.81" width="0.1524" layer="51"/>
-<wire x1="-1.422" y1="-0.81" x2="-1.422" y2="0.81" width="0.1524" layer="21"/>
-<wire x1="-1.422" y1="0.81" x2="1.422" y2="0.81" width="0.1524" layer="51"/>
-<wire x1="-0.522" y1="0.81" x2="0.522" y2="0.81" width="0.1524" layer="21"/>
-<wire x1="-0.428" y1="-0.81" x2="-0.522" y2="-0.81" width="0.1524" layer="21"/>
-<wire x1="0.522" y1="-0.81" x2="0.428" y2="-0.81" width="0.1524" layer="21"/>
-<smd name="1" x="-0.95" y="-1.15" dx="0.6" dy="1.2" layer="1" stop="no" cream="no"/>
-<smd name="2" x="0" y="-1.15" dx="0.6" dy="1.2" layer="1" stop="no" cream="no"/>
-<smd name="3" x="0.95" y="-1.15" dx="0.6" dy="1.2" layer="1" stop="no" cream="no"/>
-<smd name="4" x="0.95" y="1.15" dx="0.6" dy="1.2" layer="1" stop="no" cream="no"/>
-<smd name="5" x="-0.95" y="1.15" dx="0.6" dy="1.2" layer="1" stop="no" cream="no"/>
-<text x="-1.905" y="1.905" size="1.27" layer="25">&gt;NAME</text>
-<text x="-1.905" y="-3.429" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-1.2" y1="-1.4" x2="-0.7" y2="-0.85" layer="51"/>
-<rectangle x1="-0.25" y1="-1.4" x2="0.25" y2="-0.85" layer="51"/>
-<rectangle x1="0.7" y1="-1.4" x2="1.2" y2="-0.85" layer="51"/>
-<rectangle x1="0.7" y1="0.85" x2="1.2" y2="1.4" layer="51"/>
-<rectangle x1="-1.2" y1="0.85" x2="-0.7" y2="1.4" layer="51"/>
-<rectangle x1="-1.2875" y1="-1.8125" x2="-0.6125" y2="-0.5" layer="29"/>
-<rectangle x1="-1.2125" y1="-1.7125" x2="-0.6875" y2="-0.5875" layer="31"/>
-<rectangle x1="-0.3375" y1="-1.8125" x2="0.3375" y2="-0.5" layer="29"/>
-<rectangle x1="-0.2625" y1="-1.7125" x2="0.2625" y2="-0.5875" layer="31"/>
-<rectangle x1="0.6125" y1="-1.8125" x2="1.2875" y2="-0.5" layer="29"/>
-<rectangle x1="0.6875" y1="-1.7125" x2="1.2125" y2="-0.5875" layer="31"/>
-<rectangle x1="0.6125" y1="0.5" x2="1.2875" y2="1.8125" layer="29" rot="R180"/>
-<rectangle x1="0.6875" y1="0.5875" x2="1.2125" y2="1.7125" layer="31" rot="R180"/>
-<rectangle x1="-1.2875" y1="0.5" x2="-0.6125" y2="1.8125" layer="29" rot="R180"/>
-<rectangle x1="-1.2125" y1="0.5875" x2="-0.6875" y2="1.7125" layer="31" rot="R180"/>
-</package>
-</packages>
-<symbols>
-<symbol name="TPD3E001">
-<pin name="IO1" x="-10.16" y="2.54" length="short" direction="pas"/>
-<pin name="IO2" x="-10.16" y="0" length="short" direction="pas"/>
-<pin name="IO3" x="-10.16" y="-2.54" length="short" direction="pas"/>
-<pin name="VCC" x="10.16" y="2.54" length="short" direction="pas" rot="R180"/>
-<pin name="GND" x="10.16" y="-2.54" length="short" direction="pas" rot="R180"/>
-<wire x1="-7.62" y1="5.08" x2="-7.62" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="-7.62" y1="-5.08" x2="7.62" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="7.62" y1="-5.08" x2="7.62" y2="5.08" width="0.254" layer="94"/>
-<wire x1="7.62" y1="5.08" x2="-7.62" y2="5.08" width="0.254" layer="94"/>
-<text x="-7.62" y="5.842" size="1.778" layer="95">&gt;NAME</text>
-<text x="-7.62" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="TPD3E001" prefix="IC">
-<gates>
-<gate name="G$1" symbol="TPD3E001" x="7.62" y="-5.08"/>
-</gates>
-<devices>
-<device name="DRL" package="SOT23-5L">
-<connects>
-<connect gate="G$1" pin="GND" pad="3"/>
-<connect gate="G$1" pin="IO1" pad="1"/>
-<connect gate="G$1" pin="IO2" pad="2"/>
-<connect gate="G$1" pin="IO3" pad="4"/>
-<connect gate="G$1" pin="VCC" pad="5"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="linear">
 <description>&lt;b&gt;Linear Devices&lt;/b&gt;&lt;p&gt;
 Operational amplifiers,  comparators, voltage regulators, ADCs, DACs, etc.&lt;p&gt;
@@ -7267,8 +7194,8 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <part name="C1" library="pld-rcl" deviceset="C-US" device="C0402" value="100n"/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="X1" library="pld-txc" deviceset="TXC-7A" device=""/>
-<part name="C2" library="pld-rcl" deviceset="C-US" device="C0402" value="33p"/>
-<part name="C3" library="pld-rcl" deviceset="C-US" device="C0402" value="33p"/>
+<part name="C2" library="pld-rcl" deviceset="C-US" device="C0402" value="27p"/>
+<part name="C3" library="pld-rcl" deviceset="C-US" device="C0402" value="27p"/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="J2" library="pld-misc" deviceset="CORTEX_DEBUG" device="NAKED" value="SWD/JTAG"/>
 <part name="+3V3" library="supply1" deviceset="+3V3" device=""/>
@@ -7294,9 +7221,7 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <part name="C13" library="pld-rcl" deviceset="C-US" device="C0402" value="100n"/>
 <part name="C14" library="pld-rcl" deviceset="C-US" device="C0603" value="1u"/>
 <part name="GND12" library="supply1" deviceset="GND" device=""/>
-<part name="L1" library="EagleLibrary_Wuerth_Elektronik_eiSos_rev16a" deviceset="WE-CBF" device="_0603(HC)"/>
-<part name="IC4" library="pld-usb-ti" deviceset="TPD3E001" device="DRL"/>
-<part name="GND13" library="supply1" deviceset="GND" device=""/>
+<part name="L1" library="EagleLibrary_Wuerth_Elektronik_eiSos_rev16a" deviceset="WE-CBF" device="_0603(WB/HS)"/>
 <part name="R3" library="pld-rcl" deviceset="R-US_" device="R0402" value="22"/>
 <part name="R4" library="pld-rcl" deviceset="R-US_" device="R0402" value="22"/>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
@@ -7340,9 +7265,10 @@ INDUCTOR POWER 3.3UH 4.0A SMD&lt;br&gt;
 <text x="251.46" y="248.92" size="1.778" layer="97">PB2 = BOOT1
 0 = system, 1 = SRAM</text>
 <text x="187.96" y="45.72" size="1.778" layer="97">WP + HOLD high</text>
-<text x="12.7" y="99.06" size="1.778" layer="97">NOTE
-Most of the OTG functionality (e.g.
-power switching) offloaded to expansion.</text>
+<text x="12.7" y="83.82" size="1.778" layer="97">NOTE
+Most of the OTG functionality (e.g. power
+switching) offloaded to expansion. ESD
+protection also</text>
 <text x="261.62" y="119.38" size="1.778" layer="97">Crystal Cl=18p
 C = 2x(Cl - Cp)
 = 2x(18-{3-5})
@@ -7389,8 +7315,6 @@ C = 2x(Cl - Cp)
 <instance part="C14" gate="G$1" x="233.68" y="124.46"/>
 <instance part="GND12" gate="1" x="233.68" y="111.76"/>
 <instance part="L1" gate="G$1" x="210.82" y="129.54"/>
-<instance part="IC4" gate="G$1" x="63.5" y="58.42"/>
-<instance part="GND13" gate="1" x="76.2" y="48.26"/>
 <instance part="R3" gate="G$1" x="38.1" y="30.48"/>
 <instance part="R4" gate="G$1" x="30.48" y="35.56"/>
 <instance part="GND14" gate="1" x="353.06" y="63.5"/>
@@ -7422,9 +7346,9 @@ C = 2x(Cl - Cp)
 <instance part="L2" gate="G$1" x="96.52" y="233.68" rot="R90"/>
 <instance part="C17" gate="G$1" x="86.36" y="226.06"/>
 <instance part="GND23" gate="1" x="86.36" y="213.36"/>
-<instance part="+3V14" gate="G$1" x="78.74" y="93.98" rot="MR0"/>
-<instance part="GND24" gate="1" x="78.74" y="68.58"/>
-<instance part="USBEX" gate="G$1" x="93.98" y="83.82"/>
+<instance part="+3V14" gate="G$1" x="78.74" y="78.74" rot="MR0"/>
+<instance part="GND24" gate="1" x="78.74" y="53.34"/>
+<instance part="USBEX" gate="G$1" x="93.98" y="68.58"/>
 <instance part="J7" gate="G$1" x="93.98" y="33.02"/>
 </instances>
 <busses>
@@ -7827,9 +7751,9 @@ C = 2x(Cl - Cp)
 <wire x1="106.68" y1="233.68" x2="106.68" y2="243.84" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<wire x1="83.82" y1="86.36" x2="78.74" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="71.12" x2="78.74" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="+3V14" gate="G$1" pin="+3V3"/>
-<wire x1="78.74" y1="91.44" x2="78.74" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="76.2" x2="78.74" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="USBEX" gate="G$1" pin="1"/>
 </segment>
 </net>
@@ -7955,12 +7879,6 @@ C = 2x(Cl - Cp)
 <pinref part="GND12" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="IC4" gate="G$1" pin="GND"/>
-<wire x1="73.66" y1="55.88" x2="76.2" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="GND13" gate="1" pin="GND"/>
-<wire x1="76.2" y1="55.88" x2="76.2" y2="50.8" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <wire x1="355.6" y1="68.58" x2="353.06" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="353.06" y1="68.58" x2="353.06" y2="66.04" width="0.1524" layer="91"/>
 <pinref part="GND14" gate="1" pin="GND"/>
@@ -8010,9 +7928,9 @@ C = 2x(Cl - Cp)
 <wire x1="86.36" y1="220.98" x2="86.36" y2="215.9" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<wire x1="83.82" y1="76.2" x2="78.74" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="60.96" x2="78.74" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="GND24" gate="1" pin="GND"/>
-<wire x1="78.74" y1="76.2" x2="78.74" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="60.96" x2="78.74" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="USBEX" gate="G$1" pin="5"/>
 </segment>
 </net>
@@ -8094,12 +8012,8 @@ C = 2x(Cl - Cp)
 <label x="119.38" y="45.72" size="1.778" layer="95"/>
 <wire x1="83.82" y1="35.56" x2="81.28" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="35.56" x2="81.28" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="G$1" pin="VCC"/>
-<wire x1="81.28" y1="45.72" x2="81.28" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="81.28" y1="60.96" x2="73.66" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="116.84" y1="45.72" x2="81.28" y2="45.72" width="0.1524" layer="91"/>
 <junction x="116.84" y="45.72"/>
-<junction x="81.28" y="45.72"/>
 <pinref part="J7" gate="G$1" pin="1"/>
 </segment>
 </net>
@@ -8175,39 +8089,23 @@ C = 2x(Cl - Cp)
 </segment>
 <segment>
 <pinref part="USBEX" gate="G$1" pin="4"/>
-<label x="22.86" y="25.4" size="1.778" layer="95" rot="R180"/>
-<pinref part="IC4" gate="G$1" pin="IO1"/>
-<wire x1="45.72" y1="25.4" x2="22.86" y2="25.4" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="60.96" x2="45.72" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="60.96" x2="45.72" y2="25.4" width="0.1524" layer="91"/>
-<wire x1="83.82" y1="78.74" x2="45.72" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="78.74" x2="45.72" y2="60.96" width="0.1524" layer="91"/>
-<junction x="45.72" y="60.96"/>
+<label x="81.28" y="63.5" size="1.778" layer="95" rot="R180"/>
+<wire x1="83.82" y1="63.5" x2="81.28" y2="63.5" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="USB_I_N" class="1">
 <segment>
 <wire x1="83.82" y1="33.02" x2="73.66" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="73.66" y1="33.02" x2="73.66" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="73.66" y1="35.56" x2="50.8" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="35.56" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
 <pinref part="R4" gate="G$1" pin="2"/>
-<pinref part="IC4" gate="G$1" pin="IO3"/>
-<wire x1="50.8" y1="35.56" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="55.88" x2="53.34" y2="55.88" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="55.88" x2="50.8" y2="35.56" width="0.1524" layer="91"/>
-<junction x="50.8" y="35.56"/>
 <pinref part="J7" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="USB_I_P" class="1">
 <segment>
-<wire x1="83.82" y1="30.48" x2="48.26" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="30.48" x2="43.18" y2="30.48" width="0.1524" layer="91"/>
 <pinref part="R3" gate="G$1" pin="2"/>
-<pinref part="IC4" gate="G$1" pin="IO2"/>
-<wire x1="48.26" y1="30.48" x2="43.18" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="58.42" x2="48.26" y2="58.42" width="0.1524" layer="91"/>
-<wire x1="48.26" y1="58.42" x2="48.26" y2="30.48" width="0.1524" layer="91"/>
-<junction x="48.26" y="30.48"/>
 <pinref part="J7" gate="G$1" pin="3"/>
 </segment>
 </net>
@@ -8376,8 +8274,8 @@ C = 2x(Cl - Cp)
 </segment>
 <segment>
 <pinref part="USBEX" gate="G$1" pin="3"/>
-<wire x1="81.28" y1="81.28" x2="83.82" y2="81.28" width="0.1524" layer="91"/>
-<label x="81.28" y="81.28" size="1.778" layer="95" rot="R180"/>
+<wire x1="81.28" y1="66.04" x2="83.82" y2="66.04" width="0.1524" layer="91"/>
+<label x="81.28" y="66.04" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="!USB_PWR_FAULT" class="0">
@@ -8388,8 +8286,8 @@ C = 2x(Cl - Cp)
 </segment>
 <segment>
 <pinref part="USBEX" gate="G$1" pin="2"/>
-<wire x1="81.28" y1="83.82" x2="83.82" y2="83.82" width="0.1524" layer="91"/>
-<label x="81.28" y="83.82" size="1.778" layer="95" rot="R180"/>
+<wire x1="81.28" y1="68.58" x2="83.82" y2="68.58" width="0.1524" layer="91"/>
+<label x="81.28" y="68.58" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="USB_VBUS_DET" class="0">
