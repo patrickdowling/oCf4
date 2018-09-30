@@ -1,0 +1,3 @@
+[submodule "firmware/stm32x"]
+	path = firmware/stm32x
+	url = git@github.com:patrickdowling/stm32x.git
