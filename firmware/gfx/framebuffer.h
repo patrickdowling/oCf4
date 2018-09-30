@@ -48,13 +48,6 @@ public:
   static constexpr size_t kFrameSize = DisplayType::kFrameSize;
   static constexpr size_t kNumFrames = num_frames;
 
-  void Init() {
-    std::memset(buffer_, 0xAA, sizeof(buffer_));
-    for (size_t f = 0; f < kNumFrames; ++f)
-      frame_buffers_[f] = buffer_ + kFrameSize * f;
-    write_ptr_ = read_ptr_ = 0;
-  }
-
   size_t writeable() const {
     return kNumFrames - readable(); // TODO This might fail in certain cases?
   }
@@ -88,6 +81,14 @@ private:
 
   volatile size_t write_ptr_;
   volatile size_t read_ptr_;
+
+  void Init() {
+    std::memset(buffer_, 0xAA, sizeof(buffer_));
+    for (size_t f = 0; f < kNumFrames; ++f)
+      frame_buffers_[f] = buffer_ + kFrameSize * f;
+    write_ptr_ = read_ptr_ = 0;
+  }
+
 };
 
 }; // namespace weegfx

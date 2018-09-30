@@ -75,7 +75,7 @@ public:
 
     bool valid() const { return frame_; }
 
-    weegfx::Graphics &graphics() { return gfx_; }
+    weegfx::Graphics *operator ->() { return &gfx_; }
 
   private:
     uint8_t *frame_;

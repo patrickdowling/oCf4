@@ -23,59 +23,34 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
-// SSD1306 driver
+// DAC8565 driver
 
-#ifndef OCF4_DRIVERS_OLEDSSD1306_H_
-#define OCF4_DRIVERS_OLEDSSD1306_H_
-
-#include "util/util_macros.h"
-#include "drivers/spi.h"
+#include <algorithm>
+#include "drivers/dac.h"
+#include "drivers/gpio.h"
+#include "drivers/dac8565.h"
 
 namespace ocf4 {
 
-class OledSSD1306 {
-public:
-  DISALLOW_COPY_AND_ASSIGN(OledSSD1306);
-  OledSSD1306(Spi &spi) : spi_(spi) { Init(); }
-  ~OledSSD1306() { }
+void Dac::Init()
+{
+  gpio.CS_DAC.Set();
+  gpio.RST_DAC.Set();
+  std::fill(std::begin(values_), std::end(values_), 0);
+}
 
-  void InitDisplay(bool display_on);
-
-  static constexpr size_t kDisplayPixelW = WEEGFX_FRAME_W;
-  static constexpr size_t kDisplayPixelH = WEEGFX_FRAME_H;
-
-  static constexpr size_t kFrameSize = kDisplayPixelW * kDisplayPixelH / 8;
-  static constexpr size_t kNumPages = 8;
-  static constexpr size_t kPageSize = kFrameSize / kNumPages;
-
-  void SetupFrame(const uint8_t *frame);
-  bool frame_valid() const {
-    return current_frame_;
-  }
-
-  void AsyncWriteNextPage();
-  bool AsyncWritePageComplete();
-
-  void DisplayOn(bool on);
-  void SetContrast(uint8_t contrast);
-  void AdjustOffset(uint8_t offset) {
-    offset_ = offset & 0x0f;
-  }
-
-protected:
-  Spi &spi_;
-
-  uint8_t offset_ = 2;
-  const uint8_t *current_frame_ = nullptr;
-  size_t current_page_ = 0;
-
-  void Init();
-
-  inline const uint8_t *current_page_ptr() const {
-    return current_frame_ + current_page_ * kPageSize;
-  }
-};
+void Dac::Update()
+{
+  // TODO Eval switching SPI to 16 bit mode and simplifying
+  uint8_t tx_buf[4];
+  DAC8565::Pack<DAC8565::WRITE_LOAD, 0>(values_[0], tx_buf);
+  Send(tx_buf, 4);
+  DAC8565::Pack<DAC8565::WRITE_LOAD, 1>(values_[1], tx_buf);
+  Send(tx_buf, 4);
+  DAC8565::Pack<DAC8565::WRITE_LOAD, 2>(values_[2], tx_buf);
+  Send(tx_buf, 4);
+  DAC8565::Pack<DAC8565::WRITE_LOAD, 3>(values_[3], tx_buf);
+  Send(tx_buf, 4);
+}
 
 }; // namespace ocf4
-
-#endif // OCF4_DRIVERS_OLEDSSD1306_H_

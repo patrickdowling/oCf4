@@ -22,67 +22,16 @@
 // 
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-// Main runtime for ocf4
+#ifndef OCF4_H_
+#define OCF4_H_
 
-#include "ocf4.h"
-#include "drivers/gpio.h"
-#include "drivers/core_timer.h"
-#include "drivers/dac.h"
-
-#include "stm32x/stm32x_core.h"
-#include "stm32x/stm32x_debug.h"
-
-#include "display.h"
-
-STM32X_CORE_DEFINE();
+#include <stdint.h>
 
 namespace ocf4 {
-  GPIO gpio;
-  Spi shared_spi;
-  Display display{shared_spi};
-  Dac dac{shared_spi};
-  CoreTimer core_timer;
+
+static constexpr uint32_t kSysTickUpdate = 1000;
+static constexpr uint32_t kCoreUpdate = 24000;
 
 }; // namespace ocf4
-using namespace ocf4;
-using namespace stm32x;
 
-extern "C" void CORE_TIMER_HANDLER() {
-  if (!core_timer.Ticked())
-    return;
-
-  display.Flush();
-  dac.Update();
-
-  // Stuff happens here
-
-  display.Update();
-}
-
-extern "C" void SysTick_Handler() {
-  STM32X_CORE_TICK();
-}
-
-int main()
-{
-  STM32X_DEBUG_INIT(); 
-  STM32X_CORE_INIT(F_CPU / kSysTickUpdate);
-
-  display.Init();
-
-  core_timer.Start(F_CPU / kCoreUpdate - 1);
-
-  uint32_t frame_count = 0;
-  while (true) {
-    //stm32x::core.Delay(500);
-    auto frame = display.BeginFrame();
-    if (frame.valid()) {
-      frame->drawFrame(0, 0, 128, 64);
-      frame->drawStr(8, 8, "HELLO WORLD");
-
-      frame->setPrintPos(8, 16);
-      frame->printf("%lu", frame_count);
-      ++frame_count;
-    }
- }
-}
+#endif // OCF4_H_

@@ -23,59 +23,38 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
-// SSD1306 driver
+// Core timer
 
-#ifndef OCF4_DRIVERS_OLEDSSD1306_H_
-#define OCF4_DRIVERS_OLEDSSD1306_H_
+#ifndef OCF4_DRIVERS_CORE_TIMER_H_
+#define OCF4_DRIVERS_CORE_TIMER_H_
 
-#include "util/util_macros.h"
-#include "drivers/spi.h"
+#include "stm32x/stm32x_core.h"
+
+#define CORE_TIMER_HANDLER TIM1_UP_TIM10_IRQHandler
+//extern "C" void CORE_TIMER_HANDLER() INRAM;
 
 namespace ocf4 {
 
-class OledSSD1306 {
+class CoreTimer {
 public:
-  DISALLOW_COPY_AND_ASSIGN(OledSSD1306);
-  OledSSD1306(Spi &spi) : spi_(spi) { Init(); }
-  ~OledSSD1306() { }
+  CoreTimer() { Init(); };
+  ~CoreTimer() { };
 
-  void InitDisplay(bool display_on);
+  void Start(uint32_t period);
 
-  static constexpr size_t kDisplayPixelW = WEEGFX_FRAME_W;
-  static constexpr size_t kDisplayPixelH = WEEGFX_FRAME_H;
-
-  static constexpr size_t kFrameSize = kDisplayPixelW * kDisplayPixelH / 8;
-  static constexpr size_t kNumPages = 8;
-  static constexpr size_t kPageSize = kFrameSize / kNumPages;
-
-  void SetupFrame(const uint8_t *frame);
-  bool frame_valid() const {
-    return current_frame_;
+  inline bool Ticked() const ALWAYS_INLINE {
+    if (TIM1->SR & TIM_IT_Update) {
+      TIM1->SR = (uint16_t)~TIM_IT_Update;
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  void AsyncWriteNextPage();
-  bool AsyncWritePageComplete();
-
-  void DisplayOn(bool on);
-  void SetContrast(uint8_t contrast);
-  void AdjustOffset(uint8_t offset) {
-    offset_ = offset & 0x0f;
-  }
-
-protected:
-  Spi &spi_;
-
-  uint8_t offset_ = 2;
-  const uint8_t *current_frame_ = nullptr;
-  size_t current_page_ = 0;
-
+private:
   void Init();
-
-  inline const uint8_t *current_page_ptr() const {
-    return current_frame_ + current_page_ * kPageSize;
-  }
 };
 
 }; // namespace ocf4
 
-#endif // OCF4_DRIVERS_OLEDSSD1306_H_
+#endif // OCF4_DRIVERS_CORE_TIMER_H_
