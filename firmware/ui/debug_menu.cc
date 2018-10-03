@@ -22,40 +22,53 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#ifndef OCF4_H_
-#define OCF4_H_
 
-#include <stdint.h>
-#include "stm32x/stm32x_debug.h"
+#include "debug_menu.h"
+#include "ocf4.h"
+#include "io_frame.h"
 
 namespace ocf4 {
 
-static constexpr uint32_t kSysTickUpdate = 1000UL;
-static constexpr uint32_t kCoreUpdate = 24000UL;
-static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
+DebugMenu debug_menu;
 
-struct DebugStats {
-  struct {
-    stm32x::AveragedCycles core_timer_cycles;
-  } CORE;
+void DebugMenu::Init()
+{
+}
 
-  struct {
-    uint32_t frame_count = 0;
-    float fps = 0.f;
-  } GFX;
+void DebugMenu::HandleEvent(const Ui::EventType &)
+{
+}
 
-  struct {
-    uint32_t event_count = 0;
-  } UI;
-};
-extern DebugStats DEBUG_STATS;
+void DebugMenu::Draw(Display::Frame &frame)
+{
+  frame->setPrintPos(0, 0);
+  frame->printf("OCF4");
+  frame->drawHLine(0, 10, 128);
+
+  frame->setPrintPos(0, 16);
+  frame->printf("GFX  %lu", DEBUG_STATS.GFX.frame_count);
+
+  frame->setPrintPos(0, 24);
+  frame->printf("UI   %lu", DEBUG_STATS.UI.event_count);
+
+  frame->setPrintPos(0, 32);
+  auto core_timer_cycles = DEBUG_STATS.CORE.core_timer_cycles.value_in_us();
+  frame->printf("CORE %3luus %.1f%%", core_timer_cycles, static_cast<float>(core_timer_cycles * 100) / static_cast<float>(kCoreUpdateTimeUs));
+
+  frame->setPrintPos(0, 40);
+  frame->printf("FPS  %.2f", DEBUG_STATS.GFX.fps);
+/*
+  frame->setPrintPos(8, 24);
+  for (const auto &i : io_frame.digital_inputs)
+    frame->printf("   %c ", i.high() ? 'H' : '_' );
+
+  frame->setPrintPos(0, 32);
+  frame->printf("%4ld %4ld %4ld %4ld", io_frame.adc_in[0], io_frame.adc_in[1], io_frame.adc_in[2], io_frame.adc_in[3]);
+*/
+}
+
+void DebugMenu::SerialCommand(uint8_t)
+{
+}
 
 }; // namespace ocf4
-
-#ifdef OCF4_ENABLE_PROFILE
-#define DEBUG_PROFILE_SCOPE(x) stm32x::ScopedCycleMeasurement debug_profile_scope{x}
-#else
-#define DEBUG_PROFILE_SCOPE(x) do {} while (false)
-#endif
-
-#endif // OCF4_H_

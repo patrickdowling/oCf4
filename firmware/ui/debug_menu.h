@@ -22,40 +22,30 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#ifndef OCF4_H_
-#define OCF4_H_
 
-#include <stdint.h>
-#include "stm32x/stm32x_debug.h"
+#ifndef OCF4_DEBUG_MENU_H_
+#define OCF4_DEBUG_MENU_H_
+
+#include "ui/ui.h"
 
 namespace ocf4 {
 
-static constexpr uint32_t kSysTickUpdate = 1000UL;
-static constexpr uint32_t kCoreUpdate = 24000UL;
-static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
+class DebugMenu : public Menu {
+public:
+  DISALLOW_COPY_AND_ASSIGN(DebugMenu);
+  DebugMenu() { }
+  ~DebugMenu() { }
 
-struct DebugStats {
-  struct {
-    stm32x::AveragedCycles core_timer_cycles;
-  } CORE;
+  virtual void Init();
+  virtual void HandleEvent(const Ui::EventType &);
+  virtual void Draw(Display::Frame &);
+  virtual void SerialCommand(uint8_t);
 
-  struct {
-    uint32_t frame_count = 0;
-    float fps = 0.f;
-  } GFX;
-
-  struct {
-    uint32_t event_count = 0;
-  } UI;
+private:
 };
-extern DebugStats DEBUG_STATS;
+
+extern DebugMenu debug_menu;
 
 }; // namespace ocf4
 
-#ifdef OCF4_ENABLE_PROFILE
-#define DEBUG_PROFILE_SCOPE(x) stm32x::ScopedCycleMeasurement debug_profile_scope{x}
-#else
-#define DEBUG_PROFILE_SCOPE(x) do {} while (false)
-#endif
-
-#endif // OCF4_H_
+#endif // OCF4_DEBUG_MENU_H_

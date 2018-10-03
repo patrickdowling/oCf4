@@ -25,36 +25,34 @@
 // Main runtime for ocf4
 
 #include "ocf4.h"
+#include "display.h"
 #include "drivers/adc.h"
 #include "drivers/digital_inputs.h"
 #include "drivers/gpio.h"
 #include "drivers/core_timer.h"
 #include "drivers/dac.h"
-
 #include "stm32x/stm32x_core.h"
 #include "stm32x/stm32x_debug.h"
-
-#include "display.h"
-
-STM32X_CORE_DEFINE();
+#include "ui/ui.h"
+#include "ui/debug_menu.h"
 
 namespace ocf4 {
   DebugStats DEBUG_STATS;
 
   GPIO gpio;
   Adc adc;
+  CoreTimer core_timer;
   DigitalInputs digital_inputs;
   Spi shared_spi;
   Display display{shared_spi};
   Dac dac{shared_spi};
-  CoreTimer core_timer;
-
 }; // namespace ocf4
+STM32X_CORE_DEFINE();
+
 using namespace ocf4;
 using namespace stm32x;
 
 static IOFrame io_frame;
-
 extern "C" void CORE_TIMER_HANDLER() {
   if (!core_timer.Ticked())
     return;
@@ -72,6 +70,7 @@ extern "C" void CORE_TIMER_HANDLER() {
 
 extern "C" void SysTick_Handler() {
   STM32X_CORE_TICK();
+  ui.Poll();
 }
 
 int main()
@@ -80,32 +79,13 @@ int main()
   STM32X_CORE_INIT(F_CPU / kSysTickUpdate);
 
   display.Init();
+  debug_menu.Init();
+
+  Menu *active_menu = &debug_menu;
 
   core_timer.Start(F_CPU / kCoreUpdate - 1);
   while (true) {
-
-    auto frame = display.BeginFrame();
-    if (frame.valid()) {
-      frame->drawStr(0, 0, "OCF4");
-      frame->drawHLine(0, 10, 128);
-
-      frame->setPrintPos(0, 16);
-      frame->printf("%lu", DEBUG_STATS.GFX.frame_count);
-
-      frame->setPrintPos(8, 24);
-      for (const auto &i : io_frame.digital_inputs)
-        frame->printf("   %c ", i.high() ? 'H' : '_' );
-
-      frame->setPrintPos(0, 32);
-      frame->printf("%4ld %4ld %4ld %4ld", io_frame.adc_in[0], io_frame.adc_in[1], io_frame.adc_in[2], io_frame.adc_in[3]);
-
-      frame->setPrintPos(0, 48);
-      auto core_timer_cycles = DEBUG_STATS.CORE.core_timer_cycles.value_in_us();
-      frame->printf("CORE %3luus %.1f%%", core_timer_cycles, static_cast<float>(core_timer_cycles * 100) / static_cast<float>(kCoreUpdateTimeUs));
-
-
-      frame->setPrintPos(0, 56);
-      frame->printf("FPS  %.2f", DEBUG_STATS.GFX.fps);
-    }
+    ui.DispatchEvents(active_menu);
+    ui.Draw(active_menu);
  }
 }

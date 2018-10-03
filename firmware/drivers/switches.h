@@ -22,40 +22,38 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#ifndef OCF4_H_
-#define OCF4_H_
+// -----------------------------------------------------------------------------
+// Switches driver
 
-#include <stdint.h>
-#include "stm32x/stm32x_debug.h"
+#ifndef OCF4_DRIVERS_SWITCHES_H_
+#define OCF4_DRIVERS_SWITCHES_H_
+
+#include <array>
+#include "util/util_macros.h"
+#include "stm32x/stm32x_switchstate.h"
 
 namespace ocf4 {
 
-static constexpr uint32_t kSysTickUpdate = 1000UL;
-static constexpr uint32_t kCoreUpdate = 24000UL;
-static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
+static constexpr size_t kNumSwitches = 4;
 
-struct DebugStats {
-  struct {
-    stm32x::AveragedCycles core_timer_cycles;
-  } CORE;
+class Switches {
+public:
+  DISALLOW_COPY_AND_ASSIGN(Switches);
+  Switches() { Init(); }
+  ~Switches() { }
 
-  struct {
-    uint32_t frame_count = 0;
-    float fps = 0.f;
-  } GFX;
+  void Poll();
 
-  struct {
-    uint32_t event_count = 0;
-  } UI;
+  const stm32x::SwitchState& operator [](size_t s) const {
+    return switch_states_[s];
+  }
+
+private:
+  void Init();
+
+  std::array<stm32x::SwitchState, kNumSwitches> switch_states_;
 };
-extern DebugStats DEBUG_STATS;
 
 }; // namespace ocf4
 
-#ifdef OCF4_ENABLE_PROFILE
-#define DEBUG_PROFILE_SCOPE(x) stm32x::ScopedCycleMeasurement debug_profile_scope{x}
-#else
-#define DEBUG_PROFILE_SCOPE(x) do {} while (false)
-#endif
-
-#endif // OCF4_H_
+#endif // OCF4_DRIVERS_SWITCHES_H_

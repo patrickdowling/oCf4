@@ -74,7 +74,7 @@ public:
         owner_.EndFrame(*this);
     }
 
-    bool valid() const { return frame_; }
+    inline bool valid() const { return frame_; }
 
     weegfx::Graphics *operator ->() { return &gfx_; }
 
@@ -84,13 +84,12 @@ public:
     weegfx::Graphics &gfx_;
   };
 
-  Frame BeginFrame() {
+  inline Frame BeginFrame() {
     return {
         framebuffer_.writeable() ? framebuffer_.writeable_frame() : nullptr,
         *this,
         gfx_};
   }
-
 
   inline weegfx::Graphics &gfx() {
     return gfx_;

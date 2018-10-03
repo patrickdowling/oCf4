@@ -22,40 +22,44 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#ifndef OCF4_H_
-#define OCF4_H_
+// -----------------------------------------------------------------------------
+// Main UI Handling
 
-#include <stdint.h>
-#include "stm32x/stm32x_debug.h"
+#include "ui/ui.h"
 
 namespace ocf4 {
 
-static constexpr uint32_t kSysTickUpdate = 1000UL;
-static constexpr uint32_t kCoreUpdate = 24000UL;
-static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
+Ui ui;
 
-struct DebugStats {
-  struct {
-    stm32x::AveragedCycles core_timer_cycles;
-  } CORE;
+static constexpr ControlID encoders[] = { CONTROL_ENC_L, CONTROL_ENC_R };
+static constexpr ControlID switches[] = { CONTROL_SWITCH_UP, CONTROL_SWITCH_DOWN, CONTROL_SWITCH_L, CONTROL_SWITCH_R };
 
-  struct {
-    uint32_t frame_count = 0;
-    float fps = 0.f;
-  } GFX;
+void Ui::Init()
+{
+  events_.Push(UI::EVENT_NONE, CONTROL_DUMMY, 0, 0U);
+}
 
-  struct {
-    uint32_t event_count = 0;
-  } UI;
-};
-extern DebugStats DEBUG_STATS;
+void Ui::Poll()
+{
+  encoders_.Poll();
+  switches_.Poll();
+
+  for (auto encoder : encoders) {
+    int32_t increment = encoders_.get_increment(encoder - CONTROL_ENC_L);
+    if (increment)
+      events_.Push(UI::EVENT_ENCODER, encoder, increment, 0U);
+  }
+
+  for (auto sw : switches) {
+    if (switches_[sw].just_pressed())
+      events_.Push(UI::EVENT_BUTTON_PRESS, sw, 0, 0U);
+  }
+}
+
+bool Ui::HandleEvent(const EventType &event)
+{
+  (void)event;
+  return false;
+}
 
 }; // namespace ocf4
-
-#ifdef OCF4_ENABLE_PROFILE
-#define DEBUG_PROFILE_SCOPE(x) stm32x::ScopedCycleMeasurement debug_profile_scope{x}
-#else
-#define DEBUG_PROFILE_SCOPE(x) do {} while (false)
-#endif
-
-#endif // OCF4_H_

@@ -71,6 +71,8 @@ void OledSSD1306::InitDisplay(bool display_on)
 
 void OledSSD1306::SetupFrame(const uint8_t *frame)
 {
+  // TODO inject commands here, use member array for page_write header
+
   current_frame_ = frame;
   current_page_ = 0;
 }

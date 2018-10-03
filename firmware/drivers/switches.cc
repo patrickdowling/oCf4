@@ -22,40 +22,24 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#ifndef OCF4_H_
-#define OCF4_H_
+// -----------------------------------------------------------------------------
+// Switches driver
 
-#include <stdint.h>
-#include "stm32x/stm32x_debug.h"
+#include "drivers/switches.h"
+#include "drivers/gpio.h"
 
 namespace ocf4 {
 
-static constexpr uint32_t kSysTickUpdate = 1000UL;
-static constexpr uint32_t kCoreUpdate = 24000UL;
-static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
+void Switches::Init()
+{
+}
 
-struct DebugStats {
-  struct {
-    stm32x::AveragedCycles core_timer_cycles;
-  } CORE;
-
-  struct {
-    uint32_t frame_count = 0;
-    float fps = 0.f;
-  } GFX;
-
-  struct {
-    uint32_t event_count = 0;
-  } UI;
-};
-extern DebugStats DEBUG_STATS;
+void Switches::Poll()
+{
+  switch_states_[0].Poll(gpio.SW_T);
+  switch_states_[1].Poll(gpio.SW_B);
+  switch_states_[2].Poll(gpio.SW_L);
+  switch_states_[3].Poll(gpio.SW_R);
+}
 
 }; // namespace ocf4
-
-#ifdef OCF4_ENABLE_PROFILE
-#define DEBUG_PROFILE_SCOPE(x) stm32x::ScopedCycleMeasurement debug_profile_scope{x}
-#else
-#define DEBUG_PROFILE_SCOPE(x) do {} while (false)
-#endif
-
-#endif // OCF4_H_

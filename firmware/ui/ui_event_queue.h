@@ -22,40 +22,60 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#ifndef OCF4_H_
-#define OCF4_H_
+#ifndef UI_EVENT_QUEUE_H_
+#define UI_EVENT_QUEUE_H_
 
-#include <stdint.h>
-#include "stm32x/stm32x_debug.h"
+#include "util/util_ringbuffer.h"
+#include "ui/ui_event.h"
+#include "stm32x/stm32x_core.h"
 
-namespace ocf4 {
+namespace UI {
 
-static constexpr uint32_t kSysTickUpdate = 1000UL;
-static constexpr uint32_t kCoreUpdate = 24000UL;
-static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
+template <typename control_id, size_t size>
+class EventQueue {
+public:
+  DISALLOW_COPY_AND_ASSIGN(EventQueue);
+  EventQueue () { Init(); };
+  ~EventQueue() { }
 
-struct DebugStats {
-  struct {
-    stm32x::AveragedCycles core_timer_cycles;
-  } CORE;
+  using EventType = Event<control_id>;
 
-  struct {
-    uint32_t frame_count = 0;
-    float fps = 0.f;
-  } GFX;
+  void Init() {
+    events_.Init();
+  }
 
-  struct {
-    uint32_t event_count = 0;
-  } UI;
+  inline void Flush() {
+    events_.Flush();
+  }
+
+  inline bool empty() const {
+    return !events_.readable();
+  }
+
+  inline EventType Pop() {
+    return events_.Read();
+  }
+
+  template <class... Args>
+  inline void Push(Args&&... args) {
+    events_.EmplaceWrite(args...);
+    last_event_time_ = STM32X_CORE_NOW();
+  }
+
+  inline void Poke() {
+    last_event_time_ = STM32X_CORE_NOW();
+  }
+
+  inline uint32_t idle_time() const {
+    return STM32X_CORE_NOW() - last_event_time_;
+  }
+
+private:
+
+  util::RingBuffer<EventType, size> events_;
+  uint32_t last_event_time_ = 0;
 };
-extern DebugStats DEBUG_STATS;
 
-}; // namespace ocf4
+}; // namespace UI
 
-#ifdef OCF4_ENABLE_PROFILE
-#define DEBUG_PROFILE_SCOPE(x) stm32x::ScopedCycleMeasurement debug_profile_scope{x}
-#else
-#define DEBUG_PROFILE_SCOPE(x) do {} while (false)
-#endif
-
-#endif // OCF4_H_
+#endif // UI_EVENT_QUEUE_H_
