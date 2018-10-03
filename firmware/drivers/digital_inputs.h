@@ -23,40 +23,29 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
-// Core timer
+// Digital input drivers
 
-#include "drivers/core_timer.h"
-#include "stm32x/stm32x_core.h"
+#ifndef OCF4_DRIVERS_DIGITAL_INPUTS_H_
+#define OCF4_DRIVERS_DIGITAL_INPUTS_H_
+
+#include "io_frame.h"
+#include "drivers/gpio.h"
 
 namespace ocf4 {
 
-void CoreTimer::Init()
-{
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
-}
+class DigitalInputs {
+public:
+  DISALLOW_COPY_AND_ASSIGN(DigitalInputs);
+  DigitalInputs() { Init(); }
+  ~DigitalInputs() { }
 
-void CoreTimer::Start(uint32_t period)
-{
-  TIM_TimeBaseInitTypeDef timer_init;
-  timer_init.TIM_Prescaler = 0;
-  timer_init.TIM_CounterMode = TIM_CounterMode_Up;
-  timer_init.TIM_Period = period;
-  timer_init.TIM_ClockDivision = TIM_CKD_DIV1;
-  timer_init.TIM_RepetitionCounter = 0;
-  TIM_InternalClockConfig(TIM1);
-  TIM_TimeBaseInit(TIM1, &timer_init);
+  void Read(std::array<DigitalInputState, kNumChannels> &digital_input_state);
 
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);  // 2.2 priority split.
+private:
 
-  NVIC_InitTypeDef timer_interrupt;
-  timer_interrupt.NVIC_IRQChannel = TIM1_UP_TIM10_IRQn;
-  timer_interrupt.NVIC_IRQChannelPreemptionPriority = 0;
-  timer_interrupt.NVIC_IRQChannelSubPriority = 0;
-  timer_interrupt.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&timer_interrupt);
-
-  TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE);
-  TIM_Cmd(TIM1, ENABLE);
-}
+  void Init();
+};
 
 }; // namespace ocf4
+
+#endif // OCF4_DRIVERS_DIGITAL_INPUTS_H_

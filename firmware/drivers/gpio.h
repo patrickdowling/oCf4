@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -92,11 +92,11 @@ public:
 #endif
   stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AN<4> CV4;
   stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AN<5> CV3;
+  stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AF<6, stm32x::GPIO_SPEED::LOW, stm32x::GPIO_OTYPE::OD, stm32x::GPIO_PUPD::PULLUP, 2/*GPIO_AF2_TIM3*/> TR2;
+  stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AF<7, stm32x::GPIO_SPEED::LOW, stm32x::GPIO_OTYPE::OD, stm32x::GPIO_PUPD::PULLUP, 2/*GPIO_AF2_TIM3*/> TR1;
+  stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AF<8, stm32x::GPIO_SPEED::LOW, stm32x::GPIO_OTYPE::OD, stm32x::GPIO_PUPD::PULLUP, 2/*GPIO_AF2_TIM3*/> TR3;
+  stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AF<9, stm32x::GPIO_SPEED::LOW, stm32x::GPIO_OTYPE::OD, stm32x::GPIO_PUPD::PULLUP, 2/*GPIO_AF2_TIM3*/> TR4;
 #if 0
-  stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AF<6, stm32x::GPIO_SPEED::MEDIUM, stm32x::GPIO_OTYPE::PP, stm32x::GPIO_PUPD::NONE, 2/*GPIO_AF2_TIM3*/> TR2;
-  stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AF<7, stm32x::GPIO_SPEED::MEDIUM, stm32x::GPIO_OTYPE::PP, stm32x::GPIO_PUPD::NONE, 2/*GPIO_AF2_TIM3*/> TR1;
-  stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AF<8, stm32x::GPIO_SPEED::MEDIUM, stm32x::GPIO_OTYPE::PP, stm32x::GPIO_PUPD::NONE, 2/*GPIO_AF2_TIM3*/> TR3;
-  stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_AF<9, stm32x::GPIO_SPEED::MEDIUM, stm32x::GPIO_OTYPE::PP, stm32x::GPIO_PUPD::NONE, 2/*GPIO_AF2_TIM3*/> TR4;
   stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_IN<10, stm32x::GPIO_PUPD::NONE> SW_B;
   stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_OUT<11, stm32x::GPIO_SPEED::MEDIUM, stm32x::GPIO_OTYPE::PP, stm32x::GPIO_PUPD::NONE> PC11;
   stm32x::GPIOx<stm32x::GPIO_PORT_C>::GPIO_OUT<12, stm32x::GPIO_SPEED::MEDIUM, stm32x::GPIO_OTYPE::PP, stm32x::GPIO_PUPD::NONE> PC12;

@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,12 +19,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 #ifndef OCF4_DISPLAY_H_
 #define OCF4_DISPLAY_H_
 
+#include "ocf4.h"
 #include "drivers/oled_ssd1306.h"
 #include "drivers/spi.h"
 #include "gfx/framebuffer.h"
@@ -100,10 +101,21 @@ private:
   weegfx::Graphics gfx_;
   OledSSD1306 oled_;
 
+  uint32_t last_update_time_ = 0;
+  uint32_t last_frame_count_ = 0;
+
   void EndFrame(const Frame &frame) {
     if (frame.valid()) {
       gfx_.End();
       framebuffer_.written();
+      ++DEBUG_STATS.GFX.frame_count;
+      uint32_t now = STM32X_CORE_NOW();
+      if (now - last_update_time_ > 1000) {
+        uint32_t frames = DEBUG_STATS.GFX.frame_count;
+        DEBUG_STATS.GFX.fps = (DEBUG_STATS.GFX.fps + static_cast<float>(frames - last_frame_count_)) * .5f;
+        last_frame_count_ = frames;
+        last_update_time_ = now;
+      }
     }
   }
 };

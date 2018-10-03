@@ -26,6 +26,7 @@
 
 #include "ocf4.h"
 #include "drivers/adc.h"
+#include "drivers/digital_inputs.h"
 #include "drivers/gpio.h"
 #include "drivers/core_timer.h"
 #include "drivers/dac.h"
@@ -38,8 +39,11 @@
 STM32X_CORE_DEFINE();
 
 namespace ocf4 {
+  DebugStats DEBUG_STATS;
+
   GPIO gpio;
   Adc adc;
+  DigitalInputs digital_inputs;
   Spi shared_spi;
   Display display{shared_spi};
   Dac dac{shared_spi};
@@ -49,19 +53,21 @@ namespace ocf4 {
 using namespace ocf4;
 using namespace stm32x;
 
+static IOFrame io_frame;
+
 extern "C" void CORE_TIMER_HANDLER() {
   if (!core_timer.Ticked())
     return;
 
+  DEBUG_PROFILE_SCOPE(DEBUG_STATS.CORE.core_timer_cycles);
   display.Flush();
-  dac.Update();
-
-  adc.Sample();
+  dac.Update(io_frame.out);
+  adc.Read(io_frame.adc_in);
   adc.StartConversion();
+  digital_inputs.Read(io_frame.digital_inputs);
+  display.Update();
 
   // Stuff happens here
-
-  display.Update();
 }
 
 extern "C" void SysTick_Handler() {
@@ -76,24 +82,30 @@ int main()
   display.Init();
 
   core_timer.Start(F_CPU / kCoreUpdate - 1);
-
-  uint32_t frame_count = 0;
   while (true) {
 
     auto frame = display.BeginFrame();
     if (frame.valid()) {
-      frame->drawFrame(0, 0, 128, 64);
-      frame->drawStr(8, 8, "HELLO WORLD");
+      frame->drawStr(0, 0, "OCF4");
+      frame->drawHLine(0, 10, 128);
 
-      frame->setPrintPos(8, 16);
-      frame->printf("%lu", frame_count);
+      frame->setPrintPos(0, 16);
+      frame->printf("%lu", DEBUG_STATS.GFX.frame_count);
 
       frame->setPrintPos(8, 24);
-      frame->printf("ADC0: %ld", adc.value(0));
-      frame->setPrintPos(8, 32);
-      frame->printf("ADC1: %ld", adc.value(1));
+      for (const auto &i : io_frame.digital_inputs)
+        frame->printf("   %c ", i.high() ? 'H' : '_' );
 
-      ++frame_count;
+      frame->setPrintPos(0, 32);
+      frame->printf("%4ld %4ld %4ld %4ld", io_frame.adc_in[0], io_frame.adc_in[1], io_frame.adc_in[2], io_frame.adc_in[3]);
+
+      frame->setPrintPos(0, 48);
+      auto core_timer_cycles = DEBUG_STATS.CORE.core_timer_cycles.value_in_us();
+      frame->printf("CORE %3luus %.1f%%", core_timer_cycles, static_cast<float>(core_timer_cycles * 100) / static_cast<float>(kCoreUpdateTimeUs));
+
+
+      frame->setPrintPos(0, 56);
+      frame->printf("FPS  %.2f", DEBUG_STATS.GFX.fps);
     }
  }
 }

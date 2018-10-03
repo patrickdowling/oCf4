@@ -22,9 +22,9 @@
 // Basic graphics library implementation
 // Ported/extended from o_C
 
+#include "weegfx.h"
 #include <stdarg.h>
 #include <stdio.h>
-#include "weegfx.h"
 
 namespace weegfx {
 enum DRAW_MODE {

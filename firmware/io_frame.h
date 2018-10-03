@@ -22,41 +22,56 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-// -----------------------------------------------------------------------------
-// Core timer
 
-#include "drivers/core_timer.h"
-#include "stm32x/stm32x_core.h"
+#ifndef OCF4_IO_FRAME_H_
+#define OCF4_IO_FRAME_H_
+
+#include "ocf4.h"
+#include <array>
 
 namespace ocf4 {
 
-void CoreTimer::Init()
-{
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
-}
+static constexpr size_t kNumChannels = 4;
 
-void CoreTimer::Start(uint32_t period)
-{
-  TIM_TimeBaseInitTypeDef timer_init;
-  timer_init.TIM_Prescaler = 0;
-  timer_init.TIM_CounterMode = TIM_CounterMode_Up;
-  timer_init.TIM_Period = period;
-  timer_init.TIM_ClockDivision = TIM_CKD_DIV1;
-  timer_init.TIM_RepetitionCounter = 0;
-  TIM_InternalClockConfig(TIM1);
-  TIM_TimeBaseInit(TIM1, &timer_init);
+class DigitalInputState {
+public:
+  void Update(bool raised) {
+    uint8_t state = (state_ << 1) & RAISED_MASK;
+    if (raised)
+      state |= RISING_EDGE;
+    state_ = state;
+  }
 
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);  // 2.2 priority split.
+  inline bool rising_edge() const {
+    return state_ == RISING_EDGE;
+  }
 
-  NVIC_InitTypeDef timer_interrupt;
-  timer_interrupt.NVIC_IRQChannel = TIM1_UP_TIM10_IRQn;
-  timer_interrupt.NVIC_IRQChannelPreemptionPriority = 0;
-  timer_interrupt.NVIC_IRQChannelSubPriority = 0;
-  timer_interrupt.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&timer_interrupt);
+  inline bool falling_edge() const {
+    return state_ == FALLING_EDGE;
+  }
 
-  TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE);
-  TIM_Cmd(TIM1, ENABLE);
-}
+  inline bool high() const {
+    return state_ & RISING_EDGE;
+  }
+
+private:
+  enum State : uint8_t {
+    LOW          = 0x0, // __
+    RISING_EDGE  = 0x1, // _-
+    FALLING_EDGE = 0x2, // -_
+    RAISED_MASK  = 0x3  // xx
+  };
+
+  uint8_t state_ = 0;
+};
+
+struct IOFrame {
+
+  std::array<DigitalInputState, kNumChannels> digital_inputs;
+  std::array<int32_t, kNumChannels> adc_in;
+  std::array<uint16_t, kNumChannels> out;
+};
 
 }; // namespace ocf4
+
+#endif // OCF4_IO_FRAME_H_

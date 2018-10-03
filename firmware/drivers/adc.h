@@ -42,12 +42,10 @@ public:
 
   static constexpr size_t kNumChannels = 4;
 
-  void Sample() {
-    std::copy(std::begin(raw_values_), std::end(raw_values_), std::begin(values_));
-  }
-
-  int32_t value(size_t channel) const {
-    return values_[channel];
+  inline void Read(std::array<int32_t, kNumChannels> &values) const {
+    std::transform(
+        std::begin(raw_values_), std::end(raw_values_),
+        std::begin(values), [](uint16_t v) { return v >> 4; });
   }
 
   void StartConversion();
@@ -56,7 +54,6 @@ private:
   void Init();
 
   std::array<uint16_t, kNumChannels> raw_values_;
-  std::array<int32_t, kNumChannels> values_;
 };
 
 }; // namespace ocf4

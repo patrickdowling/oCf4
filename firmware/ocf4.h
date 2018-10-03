@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,19 +19,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 #ifndef OCF4_H_
 #define OCF4_H_
 
 #include <stdint.h>
+#include "stm32x/stm32x_debug.h"
 
 namespace ocf4 {
 
 static constexpr uint32_t kSysTickUpdate = 1000;
 static constexpr uint32_t kCoreUpdate = 24000;
+static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
+
+struct DebugStats {
+  struct {
+    stm32x::AveragedCycles core_timer_cycles;
+  } CORE;
+
+  struct {
+    uint32_t frame_count = 0;
+    float fps = 0.f;
+  } GFX;
+};
+extern DebugStats DEBUG_STATS;
 
 }; // namespace ocf4
+
+#ifdef OCF4_ENABLE_PROFILE
+#define DEBUG_PROFILE_SCOPE(x) stm32x::ScopedCycleMeasurement debug_profile_scope{x}
+#else
+#define DEBUG_PROFILE_SCOPE(x) do {} while (false)
+#endif
 
 #endif // OCF4_H_

@@ -74,7 +74,7 @@ void Adc::Init()
   adc_init.ADC_ContinuousConvMode = DISABLE;
   adc_init.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
   adc_init.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
-  adc_init.ADC_DataAlign = ADC_DataAlign_Right;
+  adc_init.ADC_DataAlign = ADC_DataAlign_Left;
   adc_init.ADC_NbrOfConversion = kNumChannels / 2;
   ADC_Init(ADC1, &adc_init);
   ADC_Init(ADC2, &adc_init);
