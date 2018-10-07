@@ -28,7 +28,6 @@
 #include "drivers/oled_ssd1306.h"
 #include <cstring>
 #include "drivers/gpio.h"
-#include "drivers/ssd1306.h"
 
 namespace ocf4 {
 
@@ -37,6 +36,9 @@ void OledSSD1306::Init()
   gpio.CS_OLED.Set();
   gpio.RST.Set();
   gpio.DC.Set();
+
+  page_header_init();
+  command_buffer_reset();
 }
 
 void OledSSD1306::InitDisplay(bool display_on)
@@ -79,50 +81,63 @@ void OledSSD1306::SetupFrame(const uint8_t *frame)
 
 void OledSSD1306::AsyncWriteNextPage()
 {
-  uint8_t page_write[3];
-  page_write[0] = SSD1306::SET_HIGHER_COL_START_ADDRESS /*| (offset_ >> 4)*/; // offset truncated to lower nibble
-  page_write[1] = SSD1306::SET_LOWER_COL_START_ADDRESS | offset_;
-  page_write[2] = SSD1306::SET_PAGE_START_ADDRESS | current_page_;
+  page_header_set_page(current_page_);
 
   gpio.CS_OLED.Reset();
   gpio.DC.Reset();
-  spi_.Send(page_write, sizeof(page_write), true);
+  if (command_buffer_length_) {
+    spi_.Send(command_buffer_, command_buffer_length_, false);
+    command_buffer_reset();
+  }
+  spi_.Send(page_header_, kPageHeaderSize, true);
   gpio.DC.Set();
   spi_.AsyncTransfer(current_page_ptr(), kPageSize);
 }
 
-bool OledSSD1306::AsyncWritePageComplete()
+OledSSD1306::AsyncWriteStatus OledSSD1306::AsyncWritePollStatus()
 {
-  bool complete = spi_.AsyncTransferComplete();
-  if (complete) {
-    gpio.CS_OLED.Set();
-    if (current_page_ >= kNumPages - 1) {
-      current_frame_ = nullptr;
-      current_page_ = 0;
-    } else {
-      ++current_page_;
-    }
+  if (!spi_.AsyncTransferComplete())
+    return AsyncWriteStatus::BUSY;
+
+  gpio.CS_OLED.Set();
+  if (current_page_ >= kNumPages - 1) {
+    current_frame_ = nullptr;
+    current_page_ = 0;
+    return AsyncWriteStatus::FRAME_COMPLETE;
+  } else {
+    ++current_page_;
+    return AsyncWriteStatus::PAGE_COMPLETE;
   }
-  return complete;
 }
 
-void OledSSD1306::DisplayOn(bool on)
+void OledSSD1306::AdjustOffset(uint8_t offset)
 {
-  gpio.DC.Reset();
-  gpio.CS_OLED.Reset();
-  spi_.Send8(on ? SSD1306::SET_DISPLAY_ON : SSD1306::SET_DISPLAY_OFF);
-  spi_.Flush();
-  gpio.CS_OLED.Set();
+  offset_ = offset & 0x0f;
+  page_header_[1] = SSD1306::SET_LOWER_COL_START_ADDRESS | offset_;
 }
 
-void OledSSD1306::SetContrast(uint8_t contrast)
+void OledSSD1306::CmdFadeOut(bool enable)
 {
-  gpio.DC.Reset();
-  gpio.CS_OLED.Reset();
-  spi_.Send8(SSD1306::SET_CONTRAST);
-  spi_.Send8(contrast);
-  spi_.Flush();
-  gpio.CS_OLED.Set();
+  command_buffer_[0] = SSD1306::SET_FADE_OUT;
+  if (enable)
+    command_buffer_[1] = SSD1306::FADE_OUT | kFadeOutFrames;
+  else
+    command_buffer_[1] = SSD1306::FADE_DISABLE;
+  command_buffer_length_ = 2;
+}
+
+
+void OledSSD1306::CmdDisplayOn(bool on)
+{
+  command_buffer_[0] = on ? SSD1306::SET_DISPLAY_ON : SSD1306::SET_DISPLAY_OFF;
+  command_buffer_length_ = 1;
+}
+
+void OledSSD1306::CmdSetContrast(uint8_t contrast)
+{
+  command_buffer_[0] = SSD1306::SET_CONTRAST;
+  command_buffer_[1] = contrast;
+  command_buffer_length_ = 2;
 }
 
 }; // namespace ocf4

@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 // -----------------------------------------------------------------------------
@@ -36,6 +36,7 @@ namespace SSD1306 {
     SET_ADDRESSING_MODE = 0x20,
     SET_COLUMN_ADDRESS = 0x21,
     SET_PAGE_ADDRESS = 0x22,
+    SET_FADE_OUT = 0x23,
     SCROLL_DEACTIVATE = 0x2E,
     SET_DISPLAY_START_LINE = 0x40,
     SET_CONTRAST = 0x81,
@@ -57,6 +58,12 @@ namespace SSD1306 {
     SET_PRECHARGE_PERIOD = 0xD9,
     SET_COM_PIN_CONFIG = 0xDA,
     SET_VCOMH_DESELECT_LEVEL = 0xDB,
+  };
+
+  enum FadeMode : uint8_t {
+    FADE_DISABLE = 0x00,
+    FADE_OUT = 0x20,
+    FADE_BLINK = 0x30,
   };
 
   enum AddressingMode : uint8_t {

@@ -22,13 +22,29 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#include "display.h"
+
+#ifndef OCF4_PATCH_H_
+#define OCF4_PATCH_H_
+
+#include "io_frame.h"
 
 namespace ocf4 {
 
-void Display::Init()
-{
-  oled_.InitDisplay(true);
-}
+class Patch {
+public:
+
+  void Init();
+
+  void Process(IOFrame &io_frame);
+
+  inline bool enabled() const {
+    return enabled_;
+  }
+
+private:
+  bool enabled_ = false;
+};
 
 }; // namespace ocf4
+
+#endif // OCF4_PATCH_H_

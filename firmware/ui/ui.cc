@@ -26,10 +26,9 @@
 // Main UI Handling
 
 #include "ui/ui.h"
+#include "ui/debug_menu.h"
 
 namespace ocf4 {
-
-Ui ui;
 
 static constexpr ControlID encoders[] = { CONTROL_ENC_L, CONTROL_ENC_R };
 static constexpr ControlID switches[] = { CONTROL_SWITCH_UP, CONTROL_SWITCH_DOWN, CONTROL_SWITCH_L, CONTROL_SWITCH_R };
@@ -37,6 +36,8 @@ static constexpr ControlID switches[] = { CONTROL_SWITCH_UP, CONTROL_SWITCH_DOWN
 void Ui::Init()
 {
   events_.Push(UI::EVENT_NONE, CONTROL_DUMMY, 0, 0U);
+  debug_menu.Init();
+  active_menu_ = &debug_menu;
 }
 
 void Ui::Poll()

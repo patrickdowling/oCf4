@@ -77,7 +77,7 @@ pinout: $(PINOUT_SCRIPT)
 
 FLASH_TARGET = flash_openocd
 OPENOCD_INTERFACE = ftdi/olimex-arm-usb-tiny-h
-OPENOCD = openocd -f interface/$(OPENOCD_INTERFACE).cfg -f target/stm32f4x.cfg
+OPENOCD = openocd -f interface/$(OPENOCD_INTERFACE).cfg -f interface/ftdi/olimex-arm-jtag-swd.cfg -f target/stm32f4x.cfg
 
 .PHONY: gdb_server
 gdb_server: $(ELFFILE)

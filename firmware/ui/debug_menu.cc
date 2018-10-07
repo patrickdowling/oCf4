@@ -29,34 +29,43 @@
 
 namespace ocf4 {
 
-DebugMenu debug_menu;
-
 void DebugMenu::Init()
 {
+  AddPage("SYS", this);
+}
+
+void DebugMenu::AddPage(const char *title, Debuggable *contents)
+{
+  pages_[num_pages_].title = title;
+  pages_[num_pages_].contents = contents;
+  ++num_pages_;
 }
 
 void DebugMenu::HandleEvent(const Ui::EventType &)
 {
 }
 
-void DebugMenu::Draw(Display::Frame &frame)
+void DebugMenu::Draw(Display::Frame &frame) const
 {
-  frame->setPrintPos(0, 0);
-  frame->printf("OCF4");
+  const auto &current_page = pages_[current_page_];
+
+  frame->printf(0, 0, "%2d/%d %s", current_page_ + 1, num_pages_, current_page.title);
   frame->drawHLine(0, 10, 128);
+  current_page.contents->DebugView(frame);
+}
 
-  frame->setPrintPos(0, 16);
-  frame->printf("GFX  %lu", DEBUG_STATS.GFX.frame_count);
+void DebugMenu::SerialCommand(uint8_t)
+{
+}
 
-  frame->setPrintPos(0, 24);
-  frame->printf("UI   %lu", DEBUG_STATS.UI.event_count);
+void DebugMenu::DebugView(Display::Frame &frame) const
+{
+  frame->printf(0, 16, "GFX  %lu", DEBUG_STATS.GFX.frame_count);
+  frame->printf(0, 24, "UI   %lu", DEBUG_STATS.UI.event_count);
 
-  frame->setPrintPos(0, 32);
   auto core_timer_cycles = DEBUG_STATS.CORE.core_timer_cycles.value_in_us();
-  frame->printf("CORE %3luus %.1f%%", core_timer_cycles, static_cast<float>(core_timer_cycles * 100) / static_cast<float>(kCoreUpdateTimeUs));
-
-  frame->setPrintPos(0, 40);
-  frame->printf("FPS  %.2f", DEBUG_STATS.GFX.fps);
+  frame->printf(0, 32, "CORE %3luus %.1f%%", core_timer_cycles, static_cast<float>(core_timer_cycles * 100) / static_cast<float>(kCoreUpdateTimeUs));
+  frame->printf(0, 40, "FPS  %.2f", DEBUG_STATS.GFX.fps);
 /*
   frame->setPrintPos(8, 24);
   for (const auto &i : io_frame.digital_inputs)
@@ -65,10 +74,6 @@ void DebugMenu::Draw(Display::Frame &frame)
   frame->setPrintPos(0, 32);
   frame->printf("%4ld %4ld %4ld %4ld", io_frame.adc_in[0], io_frame.adc_in[1], io_frame.adc_in[2], io_frame.adc_in[3]);
 */
-}
-
-void DebugMenu::SerialCommand(uint8_t)
-{
 }
 
 }; // namespace ocf4

@@ -560,13 +560,24 @@ void Graphics::print_right(const char *s) {
 }
 
 void Graphics::printf(const char *fmt, ...) {
-  char buf[128];
+  char buf[kMaxPrintfLen];
   va_list args;
   va_start(args, fmt );
   //vsnprintf(buf, sizeof(buf), fmt, args);
   vsprintf(buf, fmt, args);
   va_end(args);
   print(buf);
+}
+
+void Graphics::printf(coord_t x, coord_t y, const char *fmt, ...)
+{
+  char buf[kMaxPrintfLen];
+  va_list args;
+  va_start(args, fmt );
+  //vsnprintf(buf, sizeof(buf), fmt, args);
+  vsprintf(buf, fmt, args);
+  va_end(args);
+  drawStr(x, y, buf);
 }
 
 void Graphics::drawStr(coord_t x, coord_t y, const char *s) {

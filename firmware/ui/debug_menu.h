@@ -26,6 +26,7 @@
 #ifndef OCF4_DEBUG_MENU_H_
 #define OCF4_DEBUG_MENU_H_
 
+#include <array>
 #include "ui/ui.h"
 
 namespace ocf4 {
@@ -36,12 +37,26 @@ public:
   DebugMenu() { }
   ~DebugMenu() { }
 
-  virtual void Init();
-  virtual void HandleEvent(const Ui::EventType &);
-  virtual void Draw(Display::Frame &);
-  virtual void SerialCommand(uint8_t);
+  static constexpr size_t kMaxDebugPages = 8;
+
+  virtual void Init() final;
+  virtual void HandleEvent(const Ui::EventType &) final;
+  virtual void Draw(Display::Frame &) const final;
+  virtual void SerialCommand(uint8_t) final;
+  virtual void DebugView(Display::Frame &) const final;
+
+  void AddPage(const char *title, Debuggable *contents);
 
 private:
+
+  struct MenuPage {
+    const char *title;
+    Debuggable *contents;
+  };
+
+  std::array<MenuPage, kMaxDebugPages> pages_;
+  size_t num_pages_ = 0;
+  size_t current_page_ = 0;
 };
 
 extern DebugMenu debug_menu;

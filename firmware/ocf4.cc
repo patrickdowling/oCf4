@@ -26,6 +26,7 @@
 
 #include "ocf4.h"
 #include "display.h"
+#include "patch.h"
 #include "drivers/adc.h"
 #include "drivers/digital_inputs.h"
 #include "drivers/gpio.h"
@@ -46,11 +47,17 @@ namespace ocf4 {
   Spi shared_spi;
   Display display{shared_spi};
   Dac dac{shared_spi};
+
+  DebugMenu debug_menu;
+  Ui ui;
+
 }; // namespace ocf4
 STM32X_CORE_DEFINE();
 
 using namespace ocf4;
 using namespace stm32x;
+
+Patch current_patch;
 
 static IOFrame io_frame;
 extern "C" void CORE_TIMER_HANDLER() {
@@ -66,6 +73,8 @@ extern "C" void CORE_TIMER_HANDLER() {
   display.Update();
 
   // Stuff happens here
+  if (current_patch.enabled())
+    current_patch.Process(io_frame);
 }
 
 extern "C" void SysTick_Handler() {
@@ -79,13 +88,11 @@ int main()
   STM32X_CORE_INIT(F_CPU / kSysTickUpdate);
 
   display.Init();
-  debug_menu.Init();
-
-  Menu *active_menu = &debug_menu;
+  current_patch.Init();
 
   core_timer.Start(F_CPU / kCoreUpdate - 1);
   while (true) {
-    ui.DispatchEvents(active_menu);
-    ui.Draw(active_menu);
+    ui.DispatchEvents();
+    ui.Draw();
  }
 }

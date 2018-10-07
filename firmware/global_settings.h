@@ -22,13 +22,16 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#include "display.h"
+
+#ifndef OCF4_GLOBAL_SETTINGS_H_
+#define OCF4_GLOBAL_SETTINGS_H_
 
 namespace ocf4 {
 
-void Display::Init()
-{
-  oled_.InitDisplay(true);
-}
+class GlobalSettings {
+
+};
 
 }; // namespace ocf4
+
+#endif // OCF4_GLOBAL_SETTINGS_H_

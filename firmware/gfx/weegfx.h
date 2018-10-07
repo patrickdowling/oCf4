@@ -50,6 +50,8 @@ public:
   static constexpr weegfx::coord_t kFixedFontW = 6;
   static constexpr weegfx::coord_t kFixedFontH = 8;
 
+  static constexpr size_t kMaxPrintfLen = 128;
+
   void Init();
 
   void Begin(uint8_t *frame, bool clear_frame);
@@ -103,6 +105,9 @@ public:
 
   // Might be time-consuming
   void printf(const char *fmt, ...) __attribute__((format(printf, 2, 3)));
+
+  // printf at absolute location
+  void printf(coord_t x, coord_t y, const char *fmt, ...) __attribute__((format(printf, 4, 5)));
 
   inline void drawAlignedByte(coord_t x, coord_t y, uint8_t byte) ALWAYS_INLINE;
 

@@ -42,7 +42,7 @@ public:
 
   void Init();
 
-  void inline Update() __attribute__((always_inline)) {
+  void inline Update() ALWAYS_INLINE {
     if (oled_.frame_valid()) {
       oled_.AsyncWriteNextPage();
     } else if (framebuffer_.readable()) {
@@ -51,15 +51,19 @@ public:
     }
   }
 
-  void inline Flush() __attribute__((always_inline)) {
+  void inline Flush() ALWAYS_INLINE {
     // Check if the async transfer has completed; If it has, the entire frame
     // might have been written also.
-    // TODO Better nomenclature, and we can theoretically skip some steps if
+    // TODO Better nomenclature, and we can theoretically simplify the poll if
     // the transfer is guaranteed to complete by the time we get here.
-    if (oled_.frame_valid() && oled_.AsyncWritePageComplete()) {
-      if (!oled_.frame_valid())
+    if (oled_.frame_valid()) {
+      if (OledSSD1306::AsyncWriteStatus::FRAME_COMPLETE == oled_.AsyncWritePollStatus())
         framebuffer_.read();
     }
+  }
+
+  void FadeOut() {
+    oled_.CmdFadeOut(true);
   }
 
   class Frame {

@@ -36,6 +36,9 @@
 
 namespace ocf4 {
 
+class Menu;
+class Debuggable;
+
 enum ControlID : uint16_t {
   CONTROL_SWITCH_UP,
   CONTROL_SWITCH_DOWN,
@@ -45,8 +48,6 @@ enum ControlID : uint16_t {
   CONTROL_ENC_R,
   CONTROL_DUMMY
 };
-
-class Menu;
 
 class Ui {
 public:
@@ -60,39 +61,52 @@ public:
 
   void Poll();
 
-  inline void DispatchEvents(Menu *menu);
-  inline void Draw(Menu *menu);
+  inline void DispatchEvents();
+  inline void Draw();
 
 private:
   Encoders encoders_;
   Switches switches_;
   EventQueue events_;
 
+  Menu *active_menu_;
+  bool screensaver_active_ = false;
+
   void Init();
   bool HandleEvent(const EventType &event);
 };
 
-class Menu {
+class Debuggable {
+public:
+  virtual void DebugView(Display::Frame &frame) const = 0;
+};
+
+class Menu : public Debuggable {
 public:
   virtual void Init() = 0;
   virtual void HandleEvent(const Ui::EventType &) = 0;
-  virtual void Draw(Display::Frame &frame) = 0;
+  virtual void Draw(Display::Frame &frame) const = 0;
   virtual void SerialCommand(uint8_t c) = 0;
 };
 
-inline void Ui::DispatchEvents(Menu *menu) {
+inline void Ui::DispatchEvents() {
   while (!events_.empty()) {
     auto event = events_.Pop();
-    if (!HandleEvent(event) && menu)
-      menu->HandleEvent(event);
+    if (!HandleEvent(event) && active_menu_)
+      active_menu_->HandleEvent(event);
     ++DEBUG_STATS.UI.event_count;
+  }
+
+  if (events_.idle_time() > 30000 && !screensaver_active_) {
+    //
+    screensaver_active_ = true;
   }
 }
 
-inline void Ui::Draw(Menu *menu) {
+inline void Ui::Draw() {
   auto frame = display.BeginFrame();
-  if (frame.valid() && menu)
-    menu->Draw(frame);
+  if (frame.valid() && active_menu_)
+    active_menu_->Draw(frame);
 }
 
 extern Ui ui;
