@@ -23,17 +23,15 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 
-#ifndef OCF4_GLOBAL_SETTINGS_H_
-#define OCF4_GLOBAL_SETTINGS_H_
-
-#include "stm32x/stm32x_sector_flash.h"
+#ifndef OCF4_DEBUG_PATCH_H_
+#define OCF4_DEBUG_PATCH_H_
 
 namespace ocf4 {
 
-class GlobalSettings {
+class CalibrationPatch : public {
 
 };
 
 }; // namespace ocf4
 
-#endif // OCF4_GLOBAL_SETTINGS_H_
+#endif // OCF4_DEBUG_PATCH_H_

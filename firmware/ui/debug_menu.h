@@ -37,9 +37,10 @@ public:
   DebugMenu() { }
   ~DebugMenu() { }
 
-  static constexpr size_t kMaxDebugPages = 8;
+  static constexpr int kMaxDebugPages = 8;
 
   virtual void Init() final;
+  virtual void Tick() final;
   virtual void HandleEvent(const Ui::EventType &) final;
   virtual void Draw(Display::Frame &) const final;
   virtual void SerialCommand(uint8_t) final;
@@ -55,8 +56,8 @@ private:
   };
 
   std::array<MenuPage, kMaxDebugPages> pages_;
-  size_t num_pages_ = 0;
-  size_t current_page_ = 0;
+  int num_pages_ = 0;
+  int current_page_ = 0;
 };
 
 extern DebugMenu debug_menu;

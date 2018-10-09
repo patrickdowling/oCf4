@@ -22,18 +22,28 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
+#ifndef OCF4_CALIBRATION_MENU_H_
+#define OCF4_CALIBRATION_MENU_H_
 
-#ifndef OCF4_GLOBAL_SETTINGS_H_
-#define OCF4_GLOBAL_SETTINGS_H_
-
-#include "stm32x/stm32x_sector_flash.h"
+#include "ui/ui.h"
 
 namespace ocf4 {
 
-class GlobalSettings {
+class CalibrationMenu : public Menu {
+public:
+  DISALLOW_COPY_AND_ASSING(CalibrationMenu);
+  CalibrationMenu() { Init(); }
+  ~CalibrationMenu() { }
+
+  virtual void Init() final;
+  virtual void Tick() final;
+  virtual void HandleEvent(const Ui::EventType &) final;
+  virtual void Draw(Display::Frame &) const final;
+  virtual void SerialCommand(uint8_t) final;
+  virtual void DebugView(Display::Frame &) const final;
 
 };
 
 }; // namespace ocf4
 
-#endif // OCF4_GLOBAL_SETTINGS_H_
+#endif // OCF4_CALIBRATION_MENU_H_

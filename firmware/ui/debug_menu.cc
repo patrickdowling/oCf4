@@ -36,20 +36,31 @@ void DebugMenu::Init()
 
 void DebugMenu::AddPage(const char *title, Debuggable *contents)
 {
-  pages_[num_pages_].title = title;
-  pages_[num_pages_].contents = contents;
-  ++num_pages_;
+  if (num_pages_ < kMaxDebugPages) {
+    pages_[num_pages_] = { title, contents };
+    ++num_pages_;
+  }
 }
 
-void DebugMenu::HandleEvent(const Ui::EventType &)
+void DebugMenu::Tick()
 {
+}
+
+void DebugMenu::HandleEvent(const Ui::EventType &event)
+{
+  if (UI::EVENT_ENCODER == event.type) {
+    if (CONTROL_ENC_L == event.id || CONTROL_ENC_R == event.id) {
+      current_page_ = current_page_ + event.value;
+      CONSTRAIN(current_page_, 0, num_pages_ - 1);
+    }
+  }
 }
 
 void DebugMenu::Draw(Display::Frame &frame) const
 {
   const auto &current_page = pages_[current_page_];
 
-  frame->printf(0, 0, "%2d/%d %s", current_page_ + 1, num_pages_, current_page.title);
+  frame->printf(0, 0, "%d/%d %s", current_page_ + 1, num_pages_, current_page.title);
   frame->drawHLine(0, 10, 128);
   current_page.contents->DebugView(frame);
 }

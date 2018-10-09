@@ -68,8 +68,8 @@ void Encoders::Init()
 
 void Encoders::Poll()
 {
-  encoder_state_[0].Update(gpio.ENC_R1.Read(), gpio.ENC_R2.Read());
-  encoder_state_[1].Update(gpio.ENC_L1.Read(), gpio.ENC_L2.Read());
+  encoder_state_[0].Update(gpio.ENC_L1.Read(), gpio.ENC_L2.Read());
+  encoder_state_[1].Update(gpio.ENC_R2.Read(), gpio.ENC_R1.Read());
 }
 
 }; // namespace ocf4

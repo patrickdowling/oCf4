@@ -34,6 +34,10 @@ static constexpr uint32_t kSysTickUpdate = 1000UL;
 static constexpr uint32_t kCoreUpdate = 24000UL;
 static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
 
+static constexpr size_t kNumProcessorSlots = 4;
+static constexpr size_t kPatchPoolSize  = 64*1024;
+
+
 struct DebugStats {
   struct {
     stm32x::AveragedCycles core_timer_cycles;

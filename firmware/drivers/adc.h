@@ -30,6 +30,7 @@
 
 #include <array>
 #include <algorithm>
+#include <limits>
 #include <util/util_macros.h>
 
 namespace ocf4 {
@@ -41,19 +42,48 @@ public:
   ~Adc() { }
 
   static constexpr size_t kNumChannels = 4;
+  static constexpr size_t kNumAdcs = 2;
+  static constexpr uint32_t kOversampling = 6;
+  static_assert(kNumChannels/kNumAdcs * kOversampling <= 16, "Max number of conversions per ADC channel");
 
   inline void Read(std::array<int32_t, kNumChannels> &values) const {
+    auto src = std::begin(raw_values_);
+    auto dst = std::begin(values);
+    for (size_t i = 0; i < kNumChannels; ++i) {
+      *dst++ = SampleValue(src++);
+
+    }
+    /*
     std::transform(
-        std::begin(raw_values_), std::end(raw_values_),
+        std::begin(raw_values_), std::begin(raw_values_) + kNumChannels, // std::end(raw_values_),
         std::begin(values), [](uint16_t v) { return v >> 4; });
+    */
   }
 
   void StartConversion();
 
 private:
+  std::array<uint16_t, kNumChannels * kOversampling> raw_values_;
+
   void Init();
 
-  std::array<uint16_t, kNumChannels> raw_values_;
+  // Vague attempts to tame the F4 ADC noisiness.
+  // - Oversampling
+  // - Discard largest and smallest sample
+  template <typename iterator>
+  constexpr int32_t SampleValue(iterator it) const {
+    int32_t sum = 0;
+    int32_t min_sample = std::numeric_limits<int32_t>::max();
+    int32_t max_sample = std::numeric_limits<int32_t>::min();
+    for (size_t i = 0; i < kOversampling; ++i, it += kNumChannels) {
+      int32_t sample = *it;
+      sum += sample;
+      if (sample < min_sample) min_sample = sample; // std::min(sample, min);
+      if (sample > max_sample) max_sample = sample; // std::max(sample, max);
+    }
+    return (sum - min_sample - max_sample) / (kOversampling - 2);
+  }
+
 };
 
 }; // namespace ocf4

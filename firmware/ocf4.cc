@@ -36,8 +36,10 @@
 #include "stm32x/stm32x_debug.h"
 #include "ui/ui.h"
 #include "ui/debug_menu.h"
+#include "ui/io_frame_debug.h"
 
 namespace ocf4 {
+
   DebugStats DEBUG_STATS;
 
   GPIO gpio;
@@ -57,9 +59,10 @@ STM32X_CORE_DEFINE();
 using namespace ocf4;
 using namespace stm32x;
 
-Patch current_patch;
-
+static Patch current_patch;
 static IOFrame io_frame;
+static IOFrameDebug io_frame_debug{io_frame};
+
 extern "C" void CORE_TIMER_HANDLER() {
   if (!core_timer.Ticked())
     return;
@@ -80,15 +83,28 @@ extern "C" void CORE_TIMER_HANDLER() {
 extern "C" void SysTick_Handler() {
   STM32X_CORE_TICK();
   ui.Poll();
+  ui.Tick();
 }
+
+class TestProc : public Processor {
+public:
+  static constexpr uint32_t type_id = FOURCC<'T', 'E', 'S', 'T'>::value;
+  virtual void Init(PatchMemoryPool &) final { }
+  virtual void Process(IOFrame &) final { }
+};
 
 int main()
 {
   STM32X_DEBUG_INIT();
   STM32X_CORE_INIT(F_CPU / kSysTickUpdate);
 
+  debug_menu.AddPage("IO", &io_frame_debug);
+  debug_menu.AddPage("PATCH", &current_patch);
+
   display.Init();
-  current_patch.Init();
+  current_patch.Reset();
+  current_patch.AddProcessor<TestProc>();
+  current_patch.enable(true);
 
   core_timer.Start(F_CPU / kCoreUpdate - 1);
   while (true) {

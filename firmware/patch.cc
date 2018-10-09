@@ -23,17 +23,55 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 #include "patch.h"
+#include <algorithm>
 
 namespace ocf4 {
 
 void Patch::Init()
 {
-  enabled_ = true;
+}
+
+void Patch::Reset()
+{
+  enabled_ = false;
+  num_processors_ = 0;
+  memory_pool_.Free();
+  std::for_each(
+      std::begin(processors_),
+      std::end(processors_),
+      [](ProcessorSlot &slot) { slot.Reset(); }
+  );
 }
 
 void Patch::Process(IOFrame &io_frame)
 {
-  (void)io_frame;
+  if (!num_processors_)
+    return;
+
+  std::for_each(
+      std::begin(processors_),
+      std::end(processors_),
+      [&](ProcessorSlot &slot) {
+        if (slot.valid())
+          slot->Process(io_frame);
+      }
+  );
+}
+
+/*virtual*/ void Patch::DebugView(Display::Frame &frame) const
+{
+  weegfx::coord_t y = 16;
+  std::for_each(
+      std::begin(processors_),
+      std::end(processors_),
+      [&](const ProcessorSlot &slot) {
+        if (slot.valid())
+          frame->printf(0, y, "%.4s (%u)", (const char *)&slot.type_id, slot.used);
+        else
+          frame->printf(0, y, "--");
+        y += 8;
+      }
+  );
 }
 
 }; // namespace ocf4

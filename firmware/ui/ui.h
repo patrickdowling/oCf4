@@ -61,6 +61,7 @@ public:
 
   void Poll();
 
+  inline void Tick();
   inline void DispatchEvents();
   inline void Draw();
 
@@ -84,10 +85,16 @@ public:
 class Menu : public Debuggable {
 public:
   virtual void Init() = 0;
+  virtual void Tick() = 0;
   virtual void HandleEvent(const Ui::EventType &) = 0;
   virtual void Draw(Display::Frame &frame) const = 0;
   virtual void SerialCommand(uint8_t c) = 0;
 };
+
+inline void Ui::Tick() {
+  if (active_menu_)
+    active_menu_->Tick();
+}
 
 inline void Ui::DispatchEvents() {
   while (!events_.empty()) {
