@@ -74,6 +74,7 @@ extern "C" void CORE_TIMER_HANDLER() {
   adc.StartConversion();
   digital_inputs.Read(io_frame.digital_inputs);
   display.Update();
+  ++io_frame.tick;
 
   // Stuff happens here
   if (current_patch.enabled())
@@ -88,9 +89,35 @@ extern "C" void SysTick_Handler() {
 
 class TestProc : public Processor {
 public:
-  static constexpr uint32_t type_id = FOURCC<'T', 'E', 'S', 'T'>::value;
+  static constexpr uint32_t type_id = FOURCC<'T','E','S','T'>::value;
   virtual void Init(PatchMemoryPool &) final { }
-  virtual void Process(IOFrame &) final { }
+  virtual void Process(IOFrame &frame) final {
+    frame.out[0] = a++;
+    frame.out[1] = b++;
+  }
+
+private:
+  uint16_t a = 0, b = 0xffff/4, c = 0xffff/2, d = 0xffff*3 / 4;
+};
+
+class TestProcGate : public Processor {
+public:
+  static constexpr uint32_t type_id = FOURCC<'G','A','T','E'>::value;
+  virtual void Init(PatchMemoryPool &) final { }
+  virtual void Process(IOFrame &frame) final {
+    if (ticks_ > kCoreUpdate / 2) {
+      frame.out[2] = 65535;
+      frame.out[3] = 0;
+    } else {
+      frame.out[2] = 0;
+      frame.out[3] = 65535;
+    }
+    ++ticks_;
+    if (ticks_ > kCoreUpdate)
+      ticks_ = 0;
+  }
+
+  uint32_t ticks_ = 0;
 };
 
 int main()
@@ -104,6 +131,7 @@ int main()
   display.Init();
   current_patch.Reset();
   current_patch.AddProcessor<TestProc>();
+  current_patch.AddProcessor<TestProcGate>();
   current_patch.enable(true);
 
   core_timer.Start(F_CPU / kCoreUpdate - 1);

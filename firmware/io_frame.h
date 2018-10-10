@@ -66,7 +66,7 @@ private:
 };
 
 struct IOFrame {
-
+  uint32_t tick = 0;
   std::array<DigitalInputState, kNumChannels> digital_inputs;
   std::array<int32_t, kNumChannels> adc_in;
   std::array<uint16_t, kNumChannels> out;

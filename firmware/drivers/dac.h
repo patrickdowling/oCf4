@@ -52,6 +52,8 @@ private:
     spi_.Send(data, length, true);
     gpio.CS_DAC.Set();
   }
+
+  std::array<uint8_t, 4 * kNumChannels> tx_buffer_;
 };
 
 }; // namespace ocf4

@@ -8,10 +8,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-// 
+//
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 #include "drivers/spi.h"
@@ -28,6 +28,7 @@
 namespace ocf4 {
 
 // SPI1_TX : DMA2_Stream3, DMA2_Stream5
+// TODO Bit banded access to Tx/En fields?
 
 void Spi::Init()
 {
@@ -90,13 +91,21 @@ bool Spi::AsyncTransferComplete()
 {
   if (DMA2->LISR & DMA_FLAG_TCIF3 /*DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TCIF3)*/) {
     while (SPI1->SR & SPI_SR_BSY) { }
-    DMA2->LIFCR = DMA_FLAG_TCIF3 | DMA_FLAG_HTIF3; // DMA_ClearFlag(DMA2_Stream3, );
+    //DMA2->LIFCR = DMA_FLAG_TCIF3 | DMA_FLAG_HTIF3; // DMA_ClearFlag(DMA2_Stream3, ); <= done before next transfer
     SPI1->CR2 &= ~SPI_I2S_DMAReq_Tx; // SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, DISABLE);
     DMA2_Stream3->CR &= ~DMA_SxCR_EN; // DMA_Cmd(DMA2_Stream3, DISABLE);
     return true;
   } else {
     return false;
   }
+}
+
+void Spi::AsyncTransferWait()
+{
+  while (!DMA2->LISR & DMA_FLAG_TCIF3) { }
+  while (SPI1->SR & SPI_SR_BSY) { }
+  SPI1->CR2 &= ~SPI_I2S_DMAReq_Tx; // SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, DISABLE);
+  DMA2_Stream3->CR &= ~DMA_SxCR_EN; // DMA_Cmd(DMA2_Stream3, DISABLE);
 }
 
 }; // namespace ocf4

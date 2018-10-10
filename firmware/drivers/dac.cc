@@ -30,26 +30,53 @@
 #include "drivers/gpio.h"
 #include "drivers/dac8565.h"
 
+// NOTE With the SPI at 41MHz, we're overclocking the DAC by a good margin.
+// From the datasheet p7:
+// Maximum SCLK frequency is 50MHz at IOVDD = VDD = 3.6V to 5.5V and 25MHz at IOVDD = AVDD = 2.7V to 3.6V.
+
+// TODO Eval switching SPI to 16 bit mode for transfers?
+
 namespace ocf4 {
 
 void Dac::Init()
 {
   gpio.CS_DAC.Set();
   gpio.RST_DAC.Set();
+
+  auto tx_buffer = tx_buffer_.data();
+  DAC8565::Pack<DAC8565::WRITE_BUFFER, 0>(0x8000, tx_buffer);
+  DAC8565::Pack<DAC8565::WRITE_BUFFER, 1>(0x8000, tx_buffer + 4);
+  DAC8565::Pack<DAC8565::WRITE_BUFFER, 2>(0x8000, tx_buffer + 8);
+  DAC8565::Pack<DAC8565::WRITE_LOAD_ALL, 3>(0x8000, tx_buffer + 12);
 }
 
 void Dac::Update(const std::array<uint16_t, kNumChannels> &values)
 {
-  // TODO Eval switching SPI to 16 bit mode and simplifying
-  uint8_t tx_buf[4];
-  DAC8565::Pack<DAC8565::WRITE_BUFFER, 0>(values[0], tx_buf);
-  Send(tx_buf, 4);
-  DAC8565::Pack<DAC8565::WRITE_BUFFER, 1>(values[1], tx_buf);
-  Send(tx_buf, 4);
-  DAC8565::Pack<DAC8565::WRITE_BUFFER, 2>(values[2], tx_buf);
-  Send(tx_buf, 4);
-  DAC8565::Pack<DAC8565::WRITE_LOAD_ALL, 3>(values[3], tx_buf);
-  Send(tx_buf, 4);
+  auto tx_buffer = tx_buffer_.data();
+  auto src = std::begin(values);
+
+  // Interleaved transfers of data with packing of the next.
+  // This didn't actually have a meaningful performance impact...
+  DAC8565::PackValue(*src++, tx_buffer);
+  gpio.CS_DAC.Reset();
+  spi_.AsyncTransfer(tx_buffer, 3);
+  while (src != std::end(values)) {
+    tx_buffer += 4;
+    DAC8565::PackValue(*src++, tx_buffer);
+    spi_.AsyncTransferWait();
+    gpio.CS_DAC.Set();
+    gpio.CS_DAC.Reset();
+    spi_.AsyncTransfer(tx_buffer, 3);
+  }
+  spi_.AsyncTransferWait();
+  gpio.CS_DAC.Set();
+
+#if 0
+  for (size_t i = 0; i < kNumChannels; ++i, tx_buffer += 4) {
+    DAC8565::PackValue(*src++, tx_buffer);
+    Send(tx_buffer, 3);
+  }
+#endif
 }
 
 }; // namespace ocf4

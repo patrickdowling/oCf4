@@ -55,6 +55,7 @@
 #define ADC_TWOSAMPLING_DELAY ADC_TwoSamplingDelay_10Cycles
 
 // 144 = 2 channels @ 24KHz x 6x oversampling
+// TODO Better fit with opamp settling time (33k/560p)
 
 namespace ocf4 {
 

@@ -73,8 +73,8 @@ private:
   template <typename iterator>
   constexpr int32_t SampleValue(iterator it) const {
     int32_t sum = 0;
-    int32_t min_sample = std::numeric_limits<int32_t>::max();
-    int32_t max_sample = std::numeric_limits<int32_t>::min();
+    int32_t min_sample = std::numeric_limits<uint16_t>::max();
+    int32_t max_sample = std::numeric_limits<uint16_t>::min();
     for (size_t i = 0; i < kOversampling; ++i, it += kNumChannels) {
       int32_t sample = *it;
       sum += sample;
