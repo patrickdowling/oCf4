@@ -22,12 +22,27 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
+// -----------------------------------------------------------------------------
+// Serial TX/RX
 
-#ifndef OCF4_DEBUG_PATCH_H_
-#define OCF4_DEBUG_PATCH_H_
+#include "drivers/serial_port.h"
 
 namespace ocf4 {
 
-}; // namespace ocf4
+void SerialPort::Init(uint32_t baud_rate)
+{
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
 
-#endif // OCF4_DEBUG_PATCH_H_
+  USART_InitTypeDef usart_init;
+  USART_StructInit(&usart_init);
+  usart_init.USART_BaudRate = baud_rate;
+  usart_init.USART_WordLength = USART_WordLength_8b;
+  usart_init.USART_StopBits = USART_StopBits_1;
+  usart_init.USART_Parity = USART_Parity_No;
+  usart_init.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+  usart_init.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+  USART_Init(USART3, &usart_init);
+  USART_Cmd(USART3, ENABLE);
+}
+
+}; // namespace ocf4

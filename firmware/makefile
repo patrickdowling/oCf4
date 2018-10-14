@@ -29,7 +29,7 @@ TOOLCHAIN_PATH ?= ~/dev/gcc-arm-none-eabi-7-2017-q4-major/
 #
 PROJECT = ocf4
 PROJECT_INCLUDE_DIRS = .
-PROJECT_SRC_DIRS = . drivers ui gfx
+PROJECT_SRC_DIRS = . drivers ui gfx patches
 PROJECT_RESOURCE_DIR = resources/
 PROJECT_RESOURCE_SCRIPT = $(PROJECT_RESOURCE_DIR)resources.py
 
@@ -46,7 +46,7 @@ FLASH_SIZE   = 1024K
 MIN_STACK_SIZE = 2K
 #FLASH_SETTINGS_SIZE = 1K
 ENABLE_LIBC_INIT_ARRAY = TRUE
-#ENABLE_CCM_STACK = TRUE
+#ENABLE_CCM_STACK = TRUE -> Need to fix _sbrk, which is triggered by fprintf("%f")
 
 MODEL = STM32F40_41xxx
 F_CPU = 168000000L

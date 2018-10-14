@@ -23,11 +23,21 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 
-#ifndef OCF4_DEBUG_PATCH_H_
-#define OCF4_DEBUG_PATCH_H_
+#ifndef OCF4_PROCESSOR_H_
+#define OCF4_PROCESSOR_H_
+
+#include "ocf4.h"
+#include "io_frame.h"
+#include "parameter.h"
 
 namespace ocf4 {
 
+class Processor {
+public:
+  virtual void Init(PatchMemoryPool &memory_pool) = 0;
+  virtual void Process(IOFrame &io_frame) = 0;
+};
+
 }; // namespace ocf4
 
-#endif // OCF4_DEBUG_PATCH_H_
+#endif // OCF4_PROCESSOR_H_

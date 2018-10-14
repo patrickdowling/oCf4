@@ -41,14 +41,14 @@ enum Command : uint8_t {
 template<Command command, uint8_t channel>
 inline void Pack(uint16_t value, uint8_t *tx_buffer) {
   tx_buffer[0] = command | (channel << 1);
-  tx_buffer[1] = value >> 8;
-  tx_buffer[2] = value;
+  tx_buffer[1] = static_cast<uint8_t>(value >> 8);
+  tx_buffer[2] = static_cast<uint8_t>(value);
   tx_buffer[3] = 0;
 }
 
 inline void PackValue(uint16_t value, uint8_t *tx_buffer) {
-  tx_buffer[1] = value >> 8;
-  tx_buffer[2] = value;
+  tx_buffer[1] = static_cast<uint8_t>(value >> 8);
+  tx_buffer[2] = static_cast<uint8_t>(value);
 }
 
 

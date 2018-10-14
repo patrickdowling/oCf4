@@ -27,6 +27,7 @@
 
 #include <stdint.h>
 #include "stm32x/stm32x_debug.h"
+#include "util/util_memory_pool.h"
 
 namespace ocf4 {
 
@@ -37,6 +38,7 @@ static constexpr uint32_t kCoreUpdateTimeUs = (1000000UL / kCoreUpdate);
 static constexpr size_t kNumProcessorSlots = 4;
 static constexpr size_t kPatchPoolSize  = 64*1024;
 
+using PatchMemoryPool = stm32x::MemoryPool<kPatchPoolSize>;
 
 struct DebugStats {
   struct {

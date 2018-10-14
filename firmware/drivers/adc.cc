@@ -100,7 +100,7 @@ void Adc::Init()
       ADC_RegularChannelConfig(
           channel.adc,
           channel.adc_channel,
-          channel.rank + i * kNumChannels / kNumAdcs,
+          static_cast<uint8_t>(channel.rank + i * kNumChannels / kNumAdcs),
           channel.sample_time);
   }
 

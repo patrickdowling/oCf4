@@ -22,6 +22,9 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
+// -----------------------------------------------------------------------------
+// SPI interface for OLED/DAC
+
 #include "drivers/spi.h"
 #include "drivers/gpio.h"
 
@@ -102,7 +105,7 @@ bool Spi::AsyncTransferComplete()
 
 void Spi::AsyncTransferWait()
 {
-  while (!DMA2->LISR & DMA_FLAG_TCIF3) { }
+  while (!(DMA2->LISR & DMA_FLAG_TCIF3)) { }
   while (SPI1->SR & SPI_SR_BSY) { }
   SPI1->CR2 &= ~SPI_I2S_DMAReq_Tx; // SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, DISABLE);
   DMA2_Stream3->CR &= ~DMA_SxCR_EN; // DMA_Cmd(DMA2_Stream3, DISABLE);

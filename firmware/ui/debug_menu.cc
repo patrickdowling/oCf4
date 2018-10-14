@@ -49,9 +49,10 @@ void DebugMenu::Tick()
 void DebugMenu::HandleEvent(const Ui::EventType &event)
 {
   if (UI::EVENT_ENCODER == event.type) {
-    if (CONTROL_ENC_L == event.id || CONTROL_ENC_R == event.id) {
+    if (CONTROL_ENC_L == event.id) {
       current_page_ = current_page_ + event.value;
       CONSTRAIN(current_page_, 0, num_pages_ - 1);
+    } else if (CONTROL_ENC_R == event.id) {
     }
   }
 }
@@ -77,14 +78,6 @@ void DebugMenu::DebugView(Display::Frame &frame) const
   auto core_timer_cycles = DEBUG_STATS.CORE.core_timer_cycles.value_in_us();
   frame->printf(0, 32, "CORE %3luus %.1f%%", core_timer_cycles, static_cast<float>(core_timer_cycles * 100) / static_cast<float>(kCoreUpdateTimeUs));
   frame->printf(0, 40, "FPS  %.2f", DEBUG_STATS.GFX.fps);
-/*
-  frame->setPrintPos(8, 24);
-  for (const auto &i : io_frame.digital_inputs)
-    frame->printf("   %c ", i.high() ? 'H' : '_' );
-
-  frame->setPrintPos(0, 32);
-  frame->printf("%4ld %4ld %4ld %4ld", io_frame.adc_in[0], io_frame.adc_in[1], io_frame.adc_in[2], io_frame.adc_in[3]);
-*/
 }
 
 }; // namespace ocf4

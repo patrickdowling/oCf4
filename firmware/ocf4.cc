@@ -32,6 +32,7 @@
 #include "drivers/gpio.h"
 #include "drivers/core_timer.h"
 #include "drivers/dac.h"
+#include "drivers/serial_port.h"
 #include "stm32x/stm32x_core.h"
 #include "stm32x/stm32x_debug.h"
 #include "ui/ui.h"
@@ -49,6 +50,7 @@ namespace ocf4 {
   Spi shared_spi;
   Display display{shared_spi};
   Dac dac{shared_spi};
+  SerialPort serial_port;
 
   DebugMenu debug_menu;
   Ui ui;
@@ -59,7 +61,8 @@ STM32X_CORE_DEFINE();
 using namespace ocf4;
 using namespace stm32x;
 
-static Patch current_patch;
+static PatchMemoryPool patch_memory_pool;
+static Patch current_patch{patch_memory_pool};
 static IOFrame io_frame;
 static IOFrameDebug io_frame_debug{io_frame};
 
@@ -100,12 +103,26 @@ private:
   uint16_t a = 0, b = 0xffff/4, c = 0xffff/2, d = 0xffff*3 / 4;
 };
 
+
+class ParameterList {
+public:
+  ParameterList(size_t num, EditableParameterBase * const params[]) : num_(num), params_(params) { }
+
+  const size_t num_;
+  const EditableParameterBase * const *params_;
+};
+
 class TestProcGate : public Processor {
 public:
   static constexpr uint32_t type_id = FOURCC<'G','A','T','E'>::value;
+
+  TestProcGate(uint32_t pw) {
+    pw_.set(pw);
+   }
+
   virtual void Init(PatchMemoryPool &) final { }
   virtual void Process(IOFrame &frame) final {
-    if (ticks_ > kCoreUpdate / 2) {
+    if (ticks_ > pw_.value()) {
       frame.out[2] = 65535;
       frame.out[3] = 0;
     } else {
@@ -117,7 +134,18 @@ public:
       ticks_ = 0;
   }
 
+  ParameterList parameter_list() {
+    return ParameterList(parameters_.size(), parameters_.data());
+  }
+
+private:
   uint32_t ticks_ = 0;
+  EditableParameter<uint32_t> pw_ = {"PW", kCoreUpdate / 2};
+
+  const std::array<EditableParameterBase*, 2> parameters_ = {
+    &pw_,
+    nullptr
+  };
 };
 
 int main()
@@ -131,12 +159,22 @@ int main()
   display.Init();
   current_patch.Reset();
   current_patch.AddProcessor<TestProc>();
-  current_patch.AddProcessor<TestProcGate>();
+  current_patch.AddProcessor<TestProcGate>(kCoreUpdate / 2);
   current_patch.enable(true);
+
+  serial_port.Init(9600);
 
   core_timer.Start(F_CPU / kCoreUpdate - 1);
   while (true) {
     ui.DispatchEvents();
+    current_patch.IdleLoop();
     ui.Draw();
+
+    while (serial_port.readable()) {
+      switch (serial_port.Read()) {
+        case '?': serial_port.Write('!');
+        default: break;
+      }
+    }
  }
 }

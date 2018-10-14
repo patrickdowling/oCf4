@@ -58,6 +58,11 @@ void Patch::Process(IOFrame &io_frame)
   );
 }
 
+void Patch::IdleLoop()
+{
+}
+
+
 /*virtual*/ void Patch::DebugView(Display::Frame &frame) const
 {
   weegfx::coord_t y = 16;

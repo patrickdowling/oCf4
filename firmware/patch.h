@@ -27,30 +27,23 @@
 #define OCF4_PATCH_H_
 
 #include "ocf4.h"
+#include "processor.h"
 #include "io_frame.h"
 #include "ui/debug_menu.h"
-#include "util/util_memory_pool.h"
 #include <type_traits>
 
 namespace ocf4 {
 
-using PatchMemoryPool = stm32x::MemoryPool<kPatchPoolSize>;
-
-class Processor {
-public:
-  virtual void Init(PatchMemoryPool &memory_pool) = 0;
-  virtual void Process(IOFrame &io_frame) = 0;
-};
-
 class Patch : public Debuggable {
 public:
   DISALLOW_COPY_AND_ASSIGN(Patch);
-  Patch() { Init(); }
+  Patch(PatchMemoryPool &memory_pool) : memory_pool_(memory_pool) { Init();}
   ~Patch() { }
 
   void Init();
   void Reset();
   void Process(IOFrame &io_frame);
+  void IdleLoop();
 
   virtual void DebugView(Display::Frame &) const final;
 
@@ -62,8 +55,8 @@ public:
     return enabled_;
   }
 
-  template <typename T>
-  T* AddProcessor() {
+  template <typename T, typename... Ts>
+  T* AddProcessor(Ts && ...params) {
     static_assert(std::is_convertible<T*, Processor*>::value, "Invalid processor type");
     static_assert(T::type_id, "Invalid processor type_id");
     auto &slot = processors_[num_processors_++];
@@ -71,7 +64,7 @@ public:
     size_t pool_available = memory_pool_.available();
     slot.type_id = T::type_id;
     slot.buffer = memory_pool_.Alloc(sizeof(T));
-    new (slot.buffer) T;
+    new (slot.buffer) T{params...};
     slot->Init(memory_pool_);
     slot.used = pool_available - memory_pool_.available();
 
@@ -108,7 +101,7 @@ private:
   std::array<ProcessorSlot, kNumProcessorSlots> processors_;
   size_t num_processors_ = 0;
 
-  PatchMemoryPool memory_pool_;
+  PatchMemoryPool &memory_pool_;
 };
 
 }; // namespace ocf4

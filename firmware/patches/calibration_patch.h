@@ -23,11 +23,24 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 
-#ifndef OCF4_DEBUG_PATCH_H_
-#define OCF4_DEBUG_PATCH_H_
+#ifndef OCF4_CALIBRATION_PATCH_H_
+#define OCF4_CALIBRATION_PATCH_H_
+
+#include "patch.h"
 
 namespace ocf4 {
 
+class CalibrationProcessor : public Processor {
+public:
+
+  virtual void Init(PatchMemoryPool &memory_pool) final;
+  virtual void Process(IOFrame &io_frame) final;
+
+protected:
+
+  EditableParameter<int32_t> octave_ = {"OCTAVE", 0, 0, 10};
+};
+
 }; // namespace ocf4
 
-#endif // OCF4_DEBUG_PATCH_H_
+#endif // OCF4_CALIBRATION_PATCH_H_

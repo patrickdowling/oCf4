@@ -27,6 +27,7 @@
 
 #include "ui/debug_menu.h"
 #include "io_frame.h"
+#include "resources/OC_bitmaps.h"
 
 namespace ocf4 {
 
@@ -50,6 +51,11 @@ public:
     for (weegfx::coord_t x = 0; x <= 16; ++x)
       frame->setPixel(60 + x * 4, y + 1);
 
+    y = 16;
+    for (const auto &i : io_frame_.digital_inputs) {
+      frame->drawBitmap8(2, y, 4, &OC::bitmap_gate_indicators_8[i.high() ? 16 : 0 ]);
+      y += 8;
+    }
   }
 
 private:

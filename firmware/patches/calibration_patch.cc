@@ -23,11 +23,19 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 
-#ifndef OCF4_DEBUG_PATCH_H_
-#define OCF4_DEBUG_PATCH_H_
+#include "calibration_patch.h"
 
 namespace ocf4 {
 
-}; // namespace ocf4
+void CalibrationProcessor::Init(PatchMemoryPool &memory_pool)
+{
+  (void)memory_pool;
+}
 
-#endif // OCF4_DEBUG_PATCH_H_
+void CalibrationProcessor::Process(IOFrame &io_frame)
+{
+  for (auto &out : io_frame.out)
+    out = octave_.value();
+}
+
+}; // namespace ocf4

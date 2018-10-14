@@ -22,12 +22,51 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
+// -----------------------------------------------------------------------------
+// Serial TX/RX
 
-#ifndef OCF4_DEBUG_PATCH_H_
-#define OCF4_DEBUG_PATCH_H_
+#ifndef OCF4_DRIVERS_SERIAL_PORT_H_
+#define OCF4_DRIVERS_SERIAL_PORT_H_
+
+#include "drivers/gpio.h"
+#include "util/util_macros.h"
 
 namespace ocf4 {
 
+class SerialPort {
+public:
+  DISALLOW_COPY_AND_ASSIGN(SerialPort);
+  SerialPort() { }
+  ~SerialPort() { }
+
+  static const uint32_t kDefaultBaudRate = 9600;
+
+  void Init(uint32_t baud_rate);
+
+  bool readable() const {
+    return USART3->SR & USART_FLAG_RXNE;
+  }
+
+  uint16_t Read() {
+    while (!readable()) { }
+    return USART3->DR;
+  }
+
+  bool writeable() const {
+    return USART3->SR & USART_FLAG_TXE;
+  }
+
+  void Write(uint8_t byte) {
+    while (!writeable()) { }
+    USART3->DR = byte;
+  }
+
+  void Write(const uint8_t *data, size_t count) {
+    while (count--)
+      Write(*data++);
+  }
+};
+
 }; // namespace ocf4
 
-#endif // OCF4_DEBUG_PATCH_H_
+#endif // OCF4_DRIVERS_SERIAL_PORT_H_
