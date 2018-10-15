@@ -52,8 +52,8 @@ namespace ocf4 {
   Dac dac{shared_spi};
   SerialPort serial_port;
 
-  DebugMenu debug_menu;
   Ui ui;
+  DebugMenu debug_menu;
 
 }; // namespace ocf4
 STM32X_CORE_DEFINE();
@@ -155,6 +155,7 @@ int main()
 
   debug_menu.AddPage("IO", &io_frame_debug);
   debug_menu.AddPage("PATCH", &current_patch);
+  ui.PushMenu(&debug_menu);
 
   display.Init();
   current_patch.Reset();

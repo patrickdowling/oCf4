@@ -25,7 +25,7 @@
 #ifndef OCF4_CALIBRATION_MENU_H_
 #define OCF4_CALIBRATION_MENU_H_
 
-#include "ui/ui.h"
+#include "ui/ui_menu.h"
 
 namespace ocf4 {
 
@@ -37,7 +37,7 @@ public:
 
   virtual void Init() final;
   virtual void Tick() final;
-  virtual void HandleEvent(const Ui::EventType &) final;
+  virtual void HandleEvent(const EventType &) final;
   virtual void Draw(Display::Frame &) const final;
   virtual void SerialCommand(uint8_t) final;
   virtual void DebugView(Display::Frame &) const final;

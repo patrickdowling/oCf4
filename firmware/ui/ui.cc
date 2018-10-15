@@ -26,6 +26,7 @@
 // Main UI Handling
 
 #include "ui/ui.h"
+#include "ui/ui_menu.h"
 #include "ui/debug_menu.h"
 
 namespace ocf4 {
@@ -37,7 +38,6 @@ void Ui::Init()
 {
   events_.Push(UI::EVENT_NONE, CONTROL_DUMMY, 0, 0U);
   debug_menu.Init();
-  active_menu_ = &debug_menu;
 }
 
 void Ui::Poll()
@@ -54,6 +54,36 @@ void Ui::Poll()
   for (auto sw : switches) {
     if (switches_[sw].just_pressed())
       events_.Push(UI::EVENT_BUTTON_PRESS, sw, 0, 0U);
+  }
+}
+
+void Ui::Tick() {
+  auto active_menu = get_active_menu();
+  if (active_menu)
+    active_menu->Tick();
+}
+
+void Ui::DispatchEvents() {
+  while (!events_.empty()) {
+    auto event = events_.Pop();
+    auto active_menu = get_active_menu();
+    if (!HandleEvent(event) && active_menu)
+      active_menu->HandleEvent(event);
+    ++DEBUG_STATS.UI.event_count;
+  }
+
+  if (events_.idle_time() > 30000 && !screensaver_active_) {
+    //
+    screensaver_active_ = true;
+  }
+}
+
+void Ui::Draw() {
+  auto frame = display.BeginFrame();
+  if (frame.valid()) {
+    auto active_menu = get_active_menu();
+    if (active_menu)
+      active_menu->Draw(frame);
   }
 }
 

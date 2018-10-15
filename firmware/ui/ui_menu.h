@@ -22,46 +22,30 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
+// -----------------------------------------------------------------------------
+// Abstract menu class
 
-#ifndef OCF4_DEBUG_MENU_H_
-#define OCF4_DEBUG_MENU_H_
+#include "ui.h"
 
-#include <array>
-#include "ui/ui_menu.h"
+#ifndef OCF4_UI_MENU_H_
+#define OCF4_UI_MENU_H_
 
 namespace ocf4 {
 
-class DebugMenu : public Menu {
+class Debuggable {
 public:
-  DISALLOW_COPY_AND_ASSIGN(DebugMenu);
-  DebugMenu() { }
-  ~DebugMenu() { }
-
-  static constexpr int kMaxDebugPages = 8;
-
-  virtual void Init() final;
-  virtual void Tick() final;
-  virtual void HandleEvent(const EventType &) final;
-  virtual void Draw(Display::Frame &) const final;
-  virtual void SerialCommand(uint8_t) final;
-  virtual void DebugView(Display::Frame &) const final;
-
-  void AddPage(const char *title, Debuggable *contents);
-
-private:
-
-  struct MenuPage {
-    const char *title;
-    Debuggable *contents;
-  };
-
-  std::array<MenuPage, kMaxDebugPages> pages_;
-  int num_pages_ = 0;
-  int current_page_ = 0;
+  virtual void DebugView(Display::Frame &frame) const = 0;
 };
 
-extern DebugMenu debug_menu;
+class Menu : public Debuggable {
+public:
+  virtual void Init() = 0;
+  virtual void Tick() = 0;
+  virtual void HandleEvent(const EventType &) = 0;
+  virtual void Draw(Display::Frame &frame) const = 0;
+  virtual void SerialCommand(uint8_t c) = 0;
+};
 
 }; // namespace ocf4
 
-#endif // OCF4_DEBUG_MENU_H_
+#endif // OCF4_UI_MENU_H_

@@ -46,7 +46,7 @@ void DebugMenu::Tick()
 {
 }
 
-void DebugMenu::HandleEvent(const Ui::EventType &event)
+void DebugMenu::HandleEvent(const EventType &event)
 {
   if (UI::EVENT_ENCODER == event.type) {
     if (CONTROL_ENC_L == event.id) {

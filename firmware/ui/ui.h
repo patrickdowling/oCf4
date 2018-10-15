@@ -49,72 +49,54 @@ enum ControlID : uint16_t {
   CONTROL_DUMMY
 };
 
+static constexpr size_t kUiMenuStackDepth = 8;
+static constexpr size_t kUiEventQueueDepth = 16;
+using EventQueue = UI::EventQueue<ControlID, kUiEventQueueDepth>;
+using EventType = EventQueue::EventType;
+
 class Ui {
 public:
   DISALLOW_COPY_AND_ASSIGN(Ui);
   Ui () { Init(); };
   ~Ui() { }
 
-  static constexpr size_t kQueueDepth = 16;
-  using EventQueue = UI::EventQueue<ControlID, kQueueDepth>;
-  using EventType = EventQueue::EventType;
-
   void Poll();
+  void Tick();
+  void DispatchEvents();
+  void Draw();
 
-  inline void Tick();
-  inline void DispatchEvents();
-  inline void Draw();
+  void PushMenu(Menu *menu) {
+    if (stacked_menus_ < kUiMenuStackDepth)
+      menu_stack_[stacked_menus_++] = menu;
+  }
+
+  void PopMenu() {
+    if (stacked_menus_) {
+      --stacked_menus_;
+      menu_stack_[stacked_menus_] = nullptr;
+    }
+  }
 
 private:
   Encoders encoders_;
   Switches switches_;
   EventQueue events_;
 
-  Menu *active_menu_;
+  std::array<Menu *, kUiMenuStackDepth> menu_stack_{nullptr};
+  size_t stacked_menus_ = 0;
+
   bool screensaver_active_ = false;
 
   void Init();
   bool HandleEvent(const EventType &event);
-};
 
-class Debuggable {
-public:
-  virtual void DebugView(Display::Frame &frame) const = 0;
-};
-
-class Menu : public Debuggable {
-public:
-  virtual void Init() = 0;
-  virtual void Tick() = 0;
-  virtual void HandleEvent(const Ui::EventType &) = 0;
-  virtual void Draw(Display::Frame &frame) const = 0;
-  virtual void SerialCommand(uint8_t c) = 0;
-};
-
-inline void Ui::Tick() {
-  if (active_menu_)
-    active_menu_->Tick();
-}
-
-inline void Ui::DispatchEvents() {
-  while (!events_.empty()) {
-    auto event = events_.Pop();
-    if (!HandleEvent(event) && active_menu_)
-      active_menu_->HandleEvent(event);
-    ++DEBUG_STATS.UI.event_count;
+  inline Menu *get_active_menu() {
+    if (stacked_menus_)
+      return menu_stack_[stacked_menus_ - 1];
+    else
+      return nullptr;
   }
-
-  if (events_.idle_time() > 30000 && !screensaver_active_) {
-    //
-    screensaver_active_ = true;
-  }
-}
-
-inline void Ui::Draw() {
-  auto frame = display.BeginFrame();
-  if (frame.valid() && active_menu_)
-    active_menu_->Draw(frame);
-}
+};
 
 extern Ui ui;
 }; // namespace ocf4
