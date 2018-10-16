@@ -22,30 +22,17 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-// -----------------------------------------------------------------------------
-// Default interrupt handlers.
 
-#include <stdint.h>
+#ifndef OCF4_CALIBRATION_DATA_H_
+#define OCF4_CALIBRATION_DATA_H_
 
-extern "C" {
+namespace ocf4 {
 
-#ifdef USE_FULL_ASSERT
-void assert_failed(uint8_t* file, uint32_t line) { while (1); }
-#endif
+struct CalibrationData {
+};
 
-void NMI_Handler() { }
-void HardFault_Handler() { while (1); }
-void MemManage_Handler() { while (1); }
-void BusFault_Handler() { while (1); }
-void UsageFault_Handler() { while (1); }
-void SVC_Handler() { }
-void DebugMon_Handler() { }
-void PendSV_Handler() { }
-void __cxa_pure_virtual() { while (1); }
+extern CalibrationData calibration_data;
 
-void operator delete(void *)
-{
-  while(true) { }
-}
+}; // namespace ocf4
 
-}; //extern "C"
+#endif // OCF4_CALIBRATION_DATA_H_

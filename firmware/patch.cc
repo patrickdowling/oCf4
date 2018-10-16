@@ -35,6 +35,12 @@ void Patch::Reset()
 {
   enabled_ = false;
   num_processors_ = 0;
+
+  if (root_menu_.valid()) {
+    root_menu_->~Menu();
+    root_menu_.Reset();
+  }
+
   memory_pool_.Free();
   std::for_each(
       std::begin(processors_),
@@ -48,6 +54,8 @@ void Patch::Process(IOFrame &io_frame)
   if (!num_processors_)
     return;
 
+  // TODO ADC -> calibrated values
+
   std::for_each(
       std::begin(processors_),
       std::end(processors_),
@@ -56,12 +64,13 @@ void Patch::Process(IOFrame &io_frame)
           slot->Process(io_frame);
       }
   );
+
+  // TODO DAC -> calibrated values
 }
 
 void Patch::IdleLoop()
 {
 }
-
 
 /*virtual*/ void Patch::DebugView(Display::Frame &frame) const
 {
@@ -77,6 +86,10 @@ void Patch::IdleLoop()
         y += 8;
       }
   );
+  if (root_menu_.valid())
+    frame->printf(0, y, "%.4s (%u)", (const char *)&root_menu_.type_id, root_menu_.used);
+  else
+    frame->printf(0, y, "____ (%u)", root_menu_.used);
 }
 
 }; // namespace ocf4

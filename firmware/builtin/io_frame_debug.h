@@ -22,20 +22,46 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
+#ifndef OCF4_IO_FRAME_DEBUG_H_
+#define OCF4_IO_FRAME_DEBUG_H_
 
-#include "calibration_patch.h"
+#include "builtin/debug_menu.h"
+#include "io_frame.h"
+#include "resources/OC_bitmaps.h"
 
 namespace ocf4 {
 
-void CalibrationProcessor::Init(PatchMemoryPool &memory_pool)
-{
-  (void)memory_pool;
-}
+class IOFrameDebug : public Debuggable {
+public:
+  DISALLOW_COPY_AND_ASSIGN(IOFrameDebug);
+  IOFrameDebug(const IOFrame &io_frame) : io_frame_(io_frame) { }
 
-void CalibrationProcessor::Process(IOFrame &io_frame)
-{
-  for (auto &out : io_frame.out)
-    out = octave_.value();
-}
+  virtual void DebugView(Display::Frame &frame) const final {
+    weegfx::coord_t y = 16;
+    std::for_each(
+        std::begin(io_frame_.adc_in),
+        std::end(io_frame_.adc_in),
+        [&](int32_t value) {
+          frame->printf(0, y, "%6ld", value);
+          frame->drawRect(60, y + 2, (value & 15) * 4, 4);
+          y += 8;
+        }
+      );
+    frame->drawHLine(60, y + 2, 64);
+    for (weegfx::coord_t x = 0; x <= 16; ++x)
+      frame->setPixel(60 + x * 4, y + 1);
+
+    y = 16;
+    for (const auto &i : io_frame_.digital_inputs) {
+      frame->drawBitmap8(2, y, 4, &OC::bitmap_gate_indicators_8[i.high() ? 16 : 0 ]);
+      y += 8;
+    }
+  }
+
+private:
+  const IOFrame &io_frame_;
+};
 
 }; // namespace ocf4
+
+#endif // OCF4_IO_FRAME_DEBUG_H_

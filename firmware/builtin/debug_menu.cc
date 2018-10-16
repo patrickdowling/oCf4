@@ -23,7 +23,7 @@
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
 
-#include "debug_menu.h"
+#include "builtin/debug_menu.h"
 #include "ocf4.h"
 #include "io_frame.h"
 

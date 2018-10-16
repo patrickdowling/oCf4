@@ -39,6 +39,7 @@ public:
 
 class Menu : public Debuggable {
 public:
+  virtual ~Menu() { }
   virtual void Init() = 0;
   virtual void Tick() = 0;
   virtual void HandleEvent(const EventType &) = 0;

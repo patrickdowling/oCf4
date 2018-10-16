@@ -32,6 +32,14 @@
 
 namespace ocf4 {
 
+class ParameterList {
+public:
+  ParameterList(size_t num, EditableParameterBase * const parameters[]) : num_(num), parameters_(parameters) { }
+
+  const size_t num_;
+  EditableParameterBase * const *parameters_;
+};
+
 class Processor {
 public:
   virtual void Init(PatchMemoryPool &memory_pool) = 0;

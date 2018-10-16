@@ -25,6 +25,7 @@
 // Main runtime for ocf4
 
 #include "ocf4.h"
+#include "calibration_data.h"
 #include "display.h"
 #include "patch.h"
 #include "drivers/adc.h"
@@ -36,12 +37,14 @@
 #include "stm32x/stm32x_core.h"
 #include "stm32x/stm32x_debug.h"
 #include "ui/ui.h"
-#include "ui/debug_menu.h"
-#include "ui/io_frame_debug.h"
+#include "builtin/calibration_patch.h"
+#include "builtin/debug_menu.h"
+#include "builtin/io_frame_debug.h"
 
 namespace ocf4 {
 
   DebugStats DEBUG_STATS;
+  CalibrationData calibration_data;
 
   GPIO gpio;
   Adc adc;
@@ -103,15 +106,6 @@ private:
   uint16_t a = 0, b = 0xffff/4, c = 0xffff/2, d = 0xffff*3 / 4;
 };
 
-
-class ParameterList {
-public:
-  ParameterList(size_t num, EditableParameterBase * const params[]) : num_(num), params_(params) { }
-
-  const size_t num_;
-  const EditableParameterBase * const *params_;
-};
-
 class TestProcGate : public Processor {
 public:
   static constexpr uint32_t type_id = FOURCC<'G','A','T','E'>::value;
@@ -134,7 +128,7 @@ public:
       ticks_ = 0;
   }
 
-  ParameterList parameter_list() {
+  ParameterList parameter_list() const {
     return ParameterList(parameters_.size(), parameters_.data());
   }
 
@@ -153,11 +147,17 @@ int main()
   STM32X_DEBUG_INIT();
   STM32X_CORE_INIT(F_CPU / kSysTickUpdate);
 
+  debug_menu.Init();
   debug_menu.AddPage("IO", &io_frame_debug);
   debug_menu.AddPage("PATCH", &current_patch);
   ui.PushMenu(&debug_menu);
 
   display.Init();
+/*
+  CalibrationPatch::Load(current_patch);
+  ui.PushMenu(current_patch.root_menu());
+*/
+
   current_patch.Reset();
   current_patch.AddProcessor<TestProc>();
   current_patch.AddProcessor<TestProcGate>(kCoreUpdate / 2);

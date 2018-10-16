@@ -29,7 +29,7 @@
 #include "ocf4.h"
 #include "processor.h"
 #include "io_frame.h"
-#include "ui/debug_menu.h"
+#include "builtin/debug_menu.h"
 #include <type_traits>
 
 namespace ocf4 {
@@ -55,6 +55,10 @@ public:
     return enabled_;
   }
 
+  Menu *root_menu() {
+    return root_menu_.get();
+  }
+
   template <typename T, typename... Ts>
   T* AddProcessor(Ts && ...params) {
     static_assert(std::is_convertible<T*, Processor*>::value, "Invalid processor type");
@@ -71,21 +75,31 @@ public:
     return reinterpret_cast<T*>(slot.buffer);
   }
 
+  template <typename T, typename... Ts>
+  T* AddRootMenu(Ts && ...params) {
+    static_assert(std::is_convertible<T*, Menu*>::value, "Invalid processor type");
+    static_assert(T::type_id, "Invalid menu type_id");
+
+    size_t pool_available = memory_pool_.available();
+    root_menu_.type_id = T::type_id;
+    root_menu_.buffer = memory_pool_.Alloc(sizeof(T));
+    T* menu = new (root_menu_.buffer) T{params...};
+    root_menu_->Init();
+    root_menu_.used = pool_available - memory_pool_.available();
+    return menu;
+  }
+
 private:
   bool enabled_ = false;
 
-  struct ProcessorSlot {
+  template <typename T> struct Slot {
     uint32_t type_id = 0;
     size_t used = 0;
     uint8_t *buffer = nullptr;
 
-    Processor* operator -> () {
-      return reinterpret_cast<Processor *>(buffer);
-    }
-
-    const Processor* operator -> () const {
-      return reinterpret_cast<const Processor *>(buffer);
-    }
+    T* get() { return reinterpret_cast<T *>(buffer); }
+    T* operator -> () { return reinterpret_cast<T *>(buffer); }
+    const T* operator -> () const { return reinterpret_cast<const T *>(buffer); }
 
     bool valid() const {
       return type_id && buffer;
@@ -98,8 +112,13 @@ private:
     }
   };
 
+  using ProcessorSlot = Slot<Processor>;
+  using MenuSlot = Slot<Menu>;
+
   std::array<ProcessorSlot, kNumProcessorSlots> processors_;
   size_t num_processors_ = 0;
+
+  MenuSlot root_menu_;
 
   PatchMemoryPool &memory_pool_;
 };

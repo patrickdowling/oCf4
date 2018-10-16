@@ -22,46 +22,32 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#ifndef OCF4_IO_FRAME_DEBUG_H_
-#define OCF4_IO_FRAME_DEBUG_H_
 
-#include "ui/debug_menu.h"
-#include "io_frame.h"
-#include "resources/OC_bitmaps.h"
+#ifndef OCF4_CALIBRATION_PATCH_H_
+#define OCF4_CALIBRATION_PATCH_H_
+
+#include "patch.h"
+#include "calibration_data.h"
 
 namespace ocf4 {
 
-class IOFrameDebug : public Debuggable {
+class CalibrationPatch {
 public:
-  DISALLOW_COPY_AND_ASSIGN(IOFrameDebug);
-  IOFrameDebug(const IOFrame &io_frame) : io_frame_(io_frame) { }
+  static void Load(Patch &patch);
+};
 
-  virtual void DebugView(Display::Frame &frame) const final {
-    weegfx::coord_t y = 16;
-    std::for_each(
-        std::begin(io_frame_.adc_in),
-        std::end(io_frame_.adc_in),
-        [&](int32_t value) {
-          frame->printf(0, y, "%6ld", value);
-          frame->drawRect(60, y + 2, (value & 15) * 4, 4);
-          y += 8;
-        }
-      );
-    frame->drawHLine(60, y + 2, 64);
-    for (weegfx::coord_t x = 0; x <= 16; ++x)
-      frame->setPixel(60 + x * 4, y + 1);
+class CalibrationProcessor : public Processor {
+public:
+  static constexpr uint32_t type_id = FOURCC<'p','C','A','L'>::value;
 
-    y = 16;
-    for (const auto &i : io_frame_.digital_inputs) {
-      frame->drawBitmap8(2, y, 4, &OC::bitmap_gate_indicators_8[i.high() ? 16 : 0 ]);
-      y += 8;
-    }
-  }
+  virtual void Init(PatchMemoryPool &memory_pool) final;
+  virtual void Process(IOFrame &io_frame) final;
 
-private:
-  const IOFrame &io_frame_;
+protected:
+
+  EditableParameter<int32_t> octave_ = {"OCTAVE", 0, 0, 10};
 };
 
 }; // namespace ocf4
 
-#endif // OCF4_IO_FRAME_DEBUG_H_
+#endif // OCF4_CALIBRATION_PATCH_H_

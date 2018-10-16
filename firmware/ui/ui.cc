@@ -27,7 +27,7 @@
 
 #include "ui/ui.h"
 #include "ui/ui_menu.h"
-#include "ui/debug_menu.h"
+#include "builtin/debug_menu.h"
 
 namespace ocf4 {
 

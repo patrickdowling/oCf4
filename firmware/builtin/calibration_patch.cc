@@ -22,28 +22,29 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
-#ifndef OCF4_CALIBRATION_MENU_H_
-#define OCF4_CALIBRATION_MENU_H_
 
-#include "ui/ui_menu.h"
+#include "calibration_patch.h"
+#include "builtin/calibration_menu.h"
 
 namespace ocf4 {
 
-class CalibrationMenu : public Menu {
-public:
-  DISALLOW_COPY_AND_ASSING(CalibrationMenu);
-  CalibrationMenu() { Init(); }
-  ~CalibrationMenu() { }
+/*static*/
+void CalibrationPatch::Load(Patch &patch)
+{
+  patch.Reset();
+  auto proc = patch.AddProcessor<CalibrationProcessor>();
+  patch.AddRootMenu<CalibrationMenu>(proc);
+}
 
-  virtual void Init() final;
-  virtual void Tick() final;
-  virtual void HandleEvent(const EventType &) final;
-  virtual void Draw(Display::Frame &) const final;
-  virtual void SerialCommand(uint8_t) final;
-  virtual void DebugView(Display::Frame &) const final;
+void CalibrationProcessor::Init(PatchMemoryPool &memory_pool)
+{
+  (void)memory_pool;
+}
 
-};
+void CalibrationProcessor::Process(IOFrame &io_frame)
+{
+  for (auto &out : io_frame.out)
+    out = octave_.value();
+}
 
 }; // namespace ocf4
-
-#endif // OCF4_CALIBRATION_MENU_H_

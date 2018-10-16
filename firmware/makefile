@@ -29,7 +29,7 @@ TOOLCHAIN_PATH ?= ~/dev/gcc-arm-none-eabi-7-2017-q4-major/
 #
 PROJECT = ocf4
 PROJECT_INCLUDE_DIRS = .
-PROJECT_SRC_DIRS = . drivers ui gfx patches
+PROJECT_SRC_DIRS = . drivers ui gfx builtin
 PROJECT_RESOURCE_DIR = resources/
 PROJECT_RESOURCE_SCRIPT = $(PROJECT_RESOURCE_DIR)resources.py
 
