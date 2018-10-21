@@ -34,7 +34,6 @@ void Patch::Init()
 void Patch::Reset()
 {
   enabled_ = false;
-  num_processors_ = 0;
 
   if (root_menu_.valid()) {
     root_menu_->~Menu();
@@ -44,22 +43,20 @@ void Patch::Reset()
   memory_pool_.Free();
   std::for_each(
       std::begin(processors_),
-      std::end(processors_),
+      std::begin(processors_) + num_processors_,
       [](ProcessorSlot &slot) { slot.Reset(); }
   );
+  num_processors_ = 0;
 }
 
 void Patch::Process(IOFrame &io_frame)
 {
-  if (!num_processors_)
-    return;
-
   // TODO ADC -> calibrated values
 
   std::for_each(
       std::begin(processors_),
-      std::end(processors_),
-      [&](ProcessorSlot &slot) {
+      std::begin(processors_) + num_processors_,
+      [&io_frame](ProcessorSlot &slot) {
         if (slot.valid())
           slot->Process(io_frame);
       }
@@ -77,7 +74,7 @@ void Patch::IdleLoop()
   weegfx::coord_t y = 16;
   std::for_each(
       std::begin(processors_),
-      std::end(processors_),
+      std::begin(processors_) + num_processors_,
       [&](const ProcessorSlot &slot) {
         if (slot.valid())
           frame->printf(0, y, "%.4s (%u)", (const char *)&slot.type_id, slot.used);

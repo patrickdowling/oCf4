@@ -26,9 +26,13 @@
 #ifndef OCF4_CALIBRATION_DATA_H_
 #define OCF4_CALIBRATION_DATA_H_
 
+#include <stdint.h>
+
 namespace ocf4 {
 
 struct CalibrationData {
+  uint8_t display_offset = 0;
+  uint8_t display_constrast = 0;
 };
 
 extern CalibrationData calibration_data;

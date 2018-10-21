@@ -66,6 +66,10 @@ public:
     oled_.CmdFadeOut(true);
   }
 
+  void AdjustOffset(uint8_t offset) {
+    oled_.AdjustOffset(offset);
+  }
+
   class Frame {
   public:
     Frame(uint8_t *frame, Display &owner, weegfx::Graphics &gfx) : frame_(frame), owner_(owner), gfx_(gfx) {

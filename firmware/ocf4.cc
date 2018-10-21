@@ -112,7 +112,7 @@ public:
 
   TestProcGate(uint32_t pw) {
     pw_.set(pw);
-   }
+  }
 
   virtual void Init(PatchMemoryPool &) final { }
   virtual void Process(IOFrame &frame) final {
@@ -147,11 +147,14 @@ int main()
   STM32X_DEBUG_INIT();
   STM32X_CORE_INIT(F_CPU / kSysTickUpdate);
 
+  // FIXME Init order smells suspicious
+
   debug_menu.Init();
   debug_menu.AddPage("IO", &io_frame_debug);
   debug_menu.AddPage("PATCH", &current_patch);
   ui.PushMenu(&debug_menu);
 
+  display.AdjustOffset(calibration_data.display_offset);
   display.Init();
 /*
   CalibrationPatch::Load(current_patch);

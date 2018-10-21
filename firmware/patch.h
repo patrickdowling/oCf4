@@ -22,6 +22,8 @@
 //
 // See http://creativecommons.org/licenses/MIT/ for more information.
 //
+// NOTE It might be possible to template the slot types such that they are
+// concrete processor types, rather than interfaces.
 
 #ifndef OCF4_PATCH_H_
 #define OCF4_PATCH_H_
@@ -52,7 +54,7 @@ public:
   }
 
   inline bool enabled() const {
-    return enabled_;
+    return enabled_ && num_processors_;
   }
 
   Menu *root_menu() {
@@ -66,24 +68,25 @@ public:
     auto &slot = processors_[num_processors_++];
 
     size_t pool_available = memory_pool_.available();
+    auto buffer = memory_pool_.Alloc(sizeof(T));
+    auto t = new (buffer) T{params...};
     slot.type_id = T::type_id;
-    slot.buffer = memory_pool_.Alloc(sizeof(T));
-    new (slot.buffer) T{params...};
+    slot.instance = t;
     slot->Init(memory_pool_);
     slot.used = pool_available - memory_pool_.available();
-
-    return reinterpret_cast<T*>(slot.buffer);
+    return t;
   }
 
   template <typename T, typename... Ts>
   T* AddRootMenu(Ts && ...params) {
-    static_assert(std::is_convertible<T*, Menu*>::value, "Invalid processor type");
+    static_assert(std::is_convertible<T*, Menu*>::value, "Invalid menu type");
     static_assert(T::type_id, "Invalid menu type_id");
 
     size_t pool_available = memory_pool_.available();
+    auto buffer = memory_pool_.Alloc(sizeof(T));
+    auto menu = new (buffer) T{params...};
     root_menu_.type_id = T::type_id;
-    root_menu_.buffer = memory_pool_.Alloc(sizeof(T));
-    T* menu = new (root_menu_.buffer) T{params...};
+    root_menu_.instance = menu;
     root_menu_->Init();
     root_menu_.used = pool_available - memory_pool_.available();
     return menu;
@@ -95,32 +98,31 @@ private:
   template <typename T> struct Slot {
     uint32_t type_id = 0;
     size_t used = 0;
-    uint8_t *buffer = nullptr;
+    T *instance = nullptr;
 
-    T* get() { return reinterpret_cast<T *>(buffer); }
-    T* operator -> () { return reinterpret_cast<T *>(buffer); }
-    const T* operator -> () const { return reinterpret_cast<const T *>(buffer); }
+    T* get() { return instance; }
+    T* operator -> () { return instance; }
+    const T* operator -> () const { return instance; }
 
     bool valid() const {
-      return type_id && buffer;
+      return type_id && instance;
     }
 
     void Reset() {
       type_id = 0;
       used = 0;
-      buffer = nullptr;
+      instance = nullptr;
     }
   };
-
   using ProcessorSlot = Slot<Processor>;
   using MenuSlot = Slot<Menu>;
 
-  std::array<ProcessorSlot, kNumProcessorSlots> processors_;
+  PatchMemoryPool &memory_pool_;
+
+  std::array<ProcessorSlot, kNumProcessorSlots> processors_{};
   size_t num_processors_ = 0;
 
-  MenuSlot root_menu_;
-
-  PatchMemoryPool &memory_pool_;
+  MenuSlot root_menu_{};
 };
 
 }; // namespace ocf4
