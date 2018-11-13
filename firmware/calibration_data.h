@@ -37,6 +37,6 @@ struct CalibrationData {
 
 extern CalibrationData calibration_data;
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_CALIBRATION_DATA_H_

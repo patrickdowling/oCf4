@@ -100,6 +100,6 @@ namespace SSD1306 {
 #endif
     SET_DISPLAY_ON
   };
-};
+}
 
 #endif // OCF4_DRIVERS_SSD1306_H_

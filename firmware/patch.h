@@ -125,6 +125,6 @@ private:
   MenuSlot root_menu_{};
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_PATCH_H_

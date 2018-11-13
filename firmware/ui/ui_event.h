@@ -45,6 +45,6 @@ struct Event {
   uint32_t mask;
 };
 
-};
+}
 
 #endif // UI_EVENT_H_

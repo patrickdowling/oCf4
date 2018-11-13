@@ -89,7 +89,7 @@ protected:
   : parameter_type_{ParameterTypeTraits<T>::parameter_type}
   , parameter_name_{name}
   {
-    static_assert(sizeof(T) <= storage_size);
+    static_assert(sizeof(T) <= storage_size, "Type larger than storage");
     new (&value_) T{value};
     new (&default_) T{value};
     new (&min_) T{min};
@@ -129,6 +129,6 @@ public:
   }
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_PARAMETER_H_

@@ -59,4 +59,4 @@ void CoreTimer::Start(uint32_t period)
   TIM_Cmd(TIM1, ENABLE);
 }
 
-}; // namespace ocf4
+} // namespace ocf4

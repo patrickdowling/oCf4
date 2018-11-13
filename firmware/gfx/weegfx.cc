@@ -34,7 +34,7 @@ enum DRAW_MODE {
   DRAW_CLEAR,
   DRAW_DOT
 };
-};
+}
 using weegfx::Graphics;
 
 

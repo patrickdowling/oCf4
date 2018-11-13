@@ -67,6 +67,6 @@ public:
   }
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DRIVERS_SERIAL_PORT_H_

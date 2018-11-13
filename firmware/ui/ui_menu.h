@@ -34,6 +34,7 @@ namespace ocf4 {
 
 class Debuggable {
 public:
+  virtual ~Debuggable() { }
   virtual void DebugView(Display::Frame &frame) const = 0;
 };
 
@@ -47,6 +48,6 @@ public:
   virtual void SerialCommand(uint8_t c) = 0;
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_UI_MENU_H_

@@ -79,4 +79,4 @@ void Dac::Update(const std::array<uint16_t, kNumChannels> &values)
 #endif
 }
 
-}; // namespace ocf4
+} // namespace ocf4

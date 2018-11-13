@@ -103,4 +103,4 @@ void CalibrationMenu::DebugView(Display::Frame &) const
 {
 }
 
-}; // namespace ocf4
+} // namespace ocf4

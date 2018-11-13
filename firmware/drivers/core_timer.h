@@ -55,6 +55,6 @@ private:
   void Init();
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DRIVERS_CORE_TIMER_H_

@@ -72,6 +72,6 @@ struct IOFrame {
   std::array<uint16_t, kNumChannels> out;
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_IO_FRAME_H_

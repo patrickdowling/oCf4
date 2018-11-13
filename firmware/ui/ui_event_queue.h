@@ -76,6 +76,6 @@ private:
   uint32_t last_event_time_ = 0;
 };
 
-}; // namespace UI
+} // namespace UI
 
 #endif // UI_EVENT_QUEUE_H_

@@ -62,6 +62,6 @@ private:
   const IOFrame &io_frame_;
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_IO_FRAME_DEBUG_H_

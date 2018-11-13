@@ -58,8 +58,8 @@ namespace ocf4 {
   Ui ui;
   DebugMenu debug_menu;
 
-}; // namespace ocf4
-STM32X_CORE_DEFINE();
+} // namespace ocf4
+STM32X_CORE_DEFINE()
 
 using namespace ocf4;
 using namespace stm32x;

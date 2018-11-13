@@ -31,4 +31,4 @@ void Display::Init()
   oled_.InitDisplay(true);
 }
 
-}; // namespace ocf4
+} // namespace ocf4

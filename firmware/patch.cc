@@ -89,4 +89,4 @@ void Patch::IdleLoop()
     frame->printf(0, y, "____ (%u)", root_menu_.used);
 }
 
-}; // namespace ocf4
+} // namespace ocf4

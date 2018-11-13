@@ -93,4 +93,4 @@ bool Ui::HandleEvent(const EventType &event)
   return false;
 }
 
-}; // namespace ocf4
+} // namespace ocf4

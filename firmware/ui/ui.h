@@ -99,6 +99,6 @@ private:
 };
 
 extern Ui ui;
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_UI_H_

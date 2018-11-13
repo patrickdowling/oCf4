@@ -58,6 +58,6 @@ public:
   void AsyncTransferWait();
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DRIVERS_SPI_H_

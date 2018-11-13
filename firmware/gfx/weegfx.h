@@ -144,6 +144,6 @@ inline uint8_t *Graphics::get_frame_ptr(const coord_t x, const coord_t  y) {
   return frame_ + ((y >> 3) * kWidth) + x;
 }
 
-};
+}
 
 #endif // WEEGFX_H_

@@ -59,6 +59,6 @@ private:
   EncoderState encoder_state_[kNumEncoders];
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DRIVERS_ENCODERS_H_

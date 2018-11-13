@@ -48,4 +48,4 @@ void operator delete(void *)
   while(true) { }
 }
 
-}; //extern "C"
+} //extern "C"

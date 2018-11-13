@@ -98,4 +98,4 @@ void DigitalInputs::Read(std::array<DigitalInputState, kNumChannels> &digital_in
   digital_input_state[3].Update(GetCapture(TIM3, 4) || !gpio.TR4.Read());
 }
 
-}; // namespace ocf4
+} // namespace ocf4

@@ -111,4 +111,4 @@ void Spi::AsyncTransferWait()
   DMA2_Stream3->CR &= ~DMA_SxCR_EN; // DMA_Cmd(DMA2_Stream3, DISABLE);
 }
 
-}; // namespace ocf4
+} // namespace ocf4

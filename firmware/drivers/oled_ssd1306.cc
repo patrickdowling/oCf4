@@ -140,4 +140,4 @@ void OledSSD1306::CmdSetContrast(uint8_t contrast)
   command_buffer_length_ = 2;
 }
 
-}; // namespace ocf4
+} // namespace ocf4

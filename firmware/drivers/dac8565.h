@@ -52,6 +52,6 @@ inline void PackValue(uint16_t value, uint8_t *tx_buffer) {
 }
 
 
-}; // namespace DAC8565
+} // namespace DAC8565
 
 #endif // OCF4_DRIVERS_DAC8565_H_

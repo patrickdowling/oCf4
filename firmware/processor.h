@@ -42,10 +42,12 @@ public:
 
 class Processor {
 public:
+  virtual ~Processor() { }
+
   virtual void Init(PatchMemoryPool &memory_pool) = 0;
   virtual void Process(IOFrame &io_frame) = 0;
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_PROCESSOR_H_

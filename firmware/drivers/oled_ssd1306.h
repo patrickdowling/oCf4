@@ -106,6 +106,6 @@ protected:
   }
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DRIVERS_OLEDSSD1306_H_

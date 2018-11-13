@@ -28,6 +28,6 @@
 
 namespace ocf4 {
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DEBUG_PATCH_H_

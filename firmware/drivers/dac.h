@@ -56,4 +56,4 @@ private:
   std::array<uint8_t, 4 * kNumChannels> tx_buffer_;
 };
 
-}; // namespace ocf4
+} // namespace ocf4

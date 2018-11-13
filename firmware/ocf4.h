@@ -56,7 +56,7 @@ struct DebugStats {
 };
 extern DebugStats DEBUG_STATS;
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #ifdef OCF4_ENABLE_PROFILE
 #define DEBUG_PROFILE_SCOPE(x) stm32x::ScopedCycleMeasurement debug_profile_scope{x}

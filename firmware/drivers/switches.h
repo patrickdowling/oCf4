@@ -54,6 +54,6 @@ private:
   std::array<stm32x::SwitchState, kNumSwitches> switch_states_;
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DRIVERS_SWITCHES_H_

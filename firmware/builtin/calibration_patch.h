@@ -48,6 +48,6 @@ protected:
   EditableParameter<int32_t> octave_ = {"OCTAVE", 0, 0, 10};
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_CALIBRATION_PATCH_H_

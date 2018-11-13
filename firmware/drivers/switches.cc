@@ -42,4 +42,4 @@ void Switches::Poll()
   switch_states_[3].Poll(gpio.SW_R);
 }
 
-}; // namespace ocf4
+} // namespace ocf4

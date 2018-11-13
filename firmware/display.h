@@ -128,6 +128,6 @@ private:
 };
 
 extern Display display;
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DISPLAY_H_

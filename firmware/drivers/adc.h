@@ -86,6 +86,6 @@ private:
 
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DRIVERS_ADC_H_

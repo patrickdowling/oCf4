@@ -109,5 +109,5 @@ public:
 }; // class GPIO
 
 extern GPIO gpio;
-}; // namespace ocf4
+} // namespace ocf4
 #endif // OCF4_GPIO_H_

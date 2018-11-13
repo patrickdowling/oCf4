@@ -62,6 +62,6 @@ private:
 
 extern DebugMenu debug_menu;
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_DEBUG_MENU_H_

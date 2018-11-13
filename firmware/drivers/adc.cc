@@ -137,4 +137,4 @@ void Adc::StartConversion()
   ADC_SoftwareStartConv(ADC1);
 }
 
-}; // namespace ocf4
+} // namespace ocf4

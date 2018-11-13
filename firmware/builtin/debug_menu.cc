@@ -80,4 +80,4 @@ void DebugMenu::DebugView(Display::Frame &frame) const
   frame->printf(0, 40, "FPS  %.2f", DEBUG_STATS.GFX.fps);
 }
 
-}; // namespace ocf4
+} // namespace ocf4

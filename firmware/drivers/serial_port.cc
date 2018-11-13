@@ -45,4 +45,4 @@ void SerialPort::Init(uint32_t baud_rate)
   USART_Cmd(USART3, ENABLE);
 }
 
-}; // namespace ocf4
+} // namespace ocf4

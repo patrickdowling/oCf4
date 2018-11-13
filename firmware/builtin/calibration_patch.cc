@@ -47,4 +47,4 @@ void CalibrationProcessor::Process(IOFrame &io_frame)
     out = octave_.value();
 }
 
-}; // namespace ocf4
+} // namespace ocf4

@@ -34,6 +34,6 @@ class GlobalSettings {
 
 };
 
-}; // namespace ocf4
+} // namespace ocf4
 
 #endif // OCF4_GLOBAL_SETTINGS_H_
